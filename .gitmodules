@@ -1,18 +1,18 @@
 [submodule "mozillaparis-javascript-performance-2014"]
-	path = mozillaparis-javascript-performance-2014
+	path = 2014/mozillaparis-javascript-performance-2014
 	url = https://github.com/bnjbvr/talk-javascript-performance
 [submodule "javascript-future-fosdem-2015"]
-	path = javascript-future-fosdem-2015
+	path = 2015/javascript-future-fosdem-2015
 	url = https://github.com/bnjbvr/impress-javascript-future
 [submodule "humantalks-2015-feb"]
-	path = humantalks-2015-feb
+	path = 2015/humantalks-2015-feb
 	url = https://github.com/bnjbvr/humantalks-2015-feb
 [submodule "jdll-2015-es6"]
-	path = jdll-2015-es6
+	path = 2015/jdll-2015-es6
 	url = https://github.com/bnjbvr/jdll-2015-es6
 [submodule "mlocjs-2015"]
-	path = mlocjs-2015
+	path = 2015/mlocjs-2015
 	url = https://github.com/bnjbvr/mlocjs-2015
 [submodule "lyonjs-11-2015"]
-	path = lyonjs-11-2015
+	path = 2015/lyonjs-11-2015
 	url = https://github.com/bnjbvr/lyonjs-11-2015
