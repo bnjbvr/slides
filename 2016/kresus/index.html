@@ -12,24 +12,33 @@
           font-family: 'Playfair Display', serif;
           color: #4c061d;
       }
+
       h1, h2, h3 {
           font-weight: normal;
           color: #3b3923;
       }
-      .italic {
-          font-style: italic;
-      }
+
       .remark-slide-content {
           background-color: #b4c292;
       }
-      .remark-code, .remark-inline-code {
-          font-family: 'Ubuntu Mono';
-          font-size: 1.4em;
-      }
+
       .link a {
           text-decoration: none;
           color: #4c061d;
       }
+
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.4em;
+      }
+
+      .bigger {
+          font-size: 1.8em;
+      }
+      .bigger img {
+          height: 10em;
+      }
+
     </style>
   </head>
   <body>
@@ -48,13 +57,52 @@ Notes de celui qui parle. Si vous voyez cela, il y a un raté quelque part.
 ---
 
 background-image: url(./img/firefox.png)
+background-size: 50% auto
+
+# .link[[@bnjbvr](https://twitter.com/bnjbvr)]
+
+.left[much coffee]
+
+.right[very mozilla]
+
+.left[so piano]
+
+.bigger.right[wow]
+
 
 ???
 
 Je suis ingénieur logiciel, travaille pour mozilla, je joue du piano et j'aime
 beaucoup le cinéma, blablabla on n'est pas là pour écouter ma biographie.
 
-Mais de quoi va-t-on parler aujourd'hui ?
+Mais de quoi va-t-on parler aujourd'hui ? De mon temps libre, ou de ce qu'il en
+restait. On va parler PFM.
+
+---
+
+class: middle, center
+
+# C'est quoi, un PFM ?
+
+---
+
+background-image: url(img/gangnamstyle.jpg)
+background-size: 100% auto
+class: middle, center
+
+# [&nbsp;](./demo.webm)
+
+???
+
+Opa Demo Time!
+
+- Historique long.
+- Recherche texte avec statistiques.
+- Graphes de dépenses / rentrées.
+- Visualisation de l'évolution du solde.
+- Alertes sur montants des opérations.
+- Alertes sur soldes des comptes.
+- Rapports emails.
 
 ---
 
@@ -74,6 +122,7 @@ finances personnelles" open-source, libre, collaboratif.
 ---
 
 background-image: url(./img/weboob.png)
+background-size: 100% auto
 
 # WEB Outside Of Browsers
 
@@ -87,6 +136,7 @@ background-image: url(./img/weboob.png)
 ---
 
 background-image: url(./img/cozypfm.png)
+background-size: 100% auto
 
 # cozy-pfm
 
@@ -104,47 +154,19 @@ soi-même.
 
 ---
 
-class: middle, center
+class: top, center, bigger
 
 # Ainsi naquit Kresus !
 
-![image](./img/kresus.svg)
+![logo temporaire](./img/kresus.svg)
 
-\* Logo temporaire, votre aide est la bienvenue :)
+\* Logo temporaire, toute aide est la bienvenue
 
 ???
 
 - Fork de cozy-pfm
 - Tout le client / frontend est reecrit avec ReactJS
 - ajout d'une gestion manuelle des doublons
-
----
-
-class: middle, center
-
-# C'est quoi, un PFM ?
-
----
-
-background-image: url(img/aquoicasert.jpeg)
-
----
-
-# C'est quoi, un PFM ?
-
-- Historique long.
-- Recherche texte avec statistiques.
-- Graphes de dépenses / rentrées.
-- Visualisation de l'évolution du solde.
-- Alertes sur montants des opérations.
-- Alertes sur soldes des comptes.
-- Rapports emails.
-
----
-
-background-image: url(img/gangnamstyle.jpg)
-
-???
 
 ---
 
@@ -163,6 +185,7 @@ A votre avis, quel est le plus gros problème d'un PFM ?
 ---
 
 background-image: url(img/doublons.jpg)
+background-size: auto 100%
 
 ???
 
@@ -176,23 +199,48 @@ les données.
 
 ---
 
+class: bigger
+
 # Les cas pénibles
 
 - Faux positif :
-    - Opérations identiques le même jour.
+
+--
+    - Mêmes opérations le même jour avec le même montant.
+--
 - Faux négatif :
-    - Les banques changent le libellé.
-    - Les banques changent le montant.
-    - Les banques changent la date.
+
+--
+    - Le libellé change.
+--
+    - La date change.
+--
+    - Le montant change.
 
 ???
 
 Dans le futur, ajout d'un algorithme super baleize super malin super génial de
-détection des doublons.
+détection des doublons : effectuer une sorte de diff entre les opérations déjà
+présentes et les opérations du cliché; rapprocher les opérations orphelines à
+la main à grands coups d'heuristiques.
+
+---
+
+class: middle, center
+
+# Le point sécurité
+
+![la sécurité c'est important](img/securite.png)
+
+???
+
+Compromis : si on veut la récupération automatique des opérations, il faut
+avoir accès au mot de passe, de manière directe ou indirecte. Pas de panacée.
 
 ---
 
 background-image: url(img/communaute.jpg)
+background-size: 100% auto
 
 # Communauté
 
@@ -216,8 +264,8 @@ class: middle, center
 # Merci !
 
 ### .link[[le code](https://github.com/bnjbvr/kresus)] (bnjbvr/kresus)
-### .link[[@bnjbvr](https://twitter.com/bnjbvr)]
-### .link[[kresus@benj.me](mailto:kresus@benj.me)]
+### .link[[@bnjbvr](https://twitter.com/bnjbvr)] ou .link[[#kresus](https://kiwiirc.com/client/irc.freenode.net/#kresus)]
+### .link[[https://bnjbvr.github.io/slides/2016/kresus](https://bnjbvr.github.io/slides/2016/kresus)]
 
 Votre avis sur cette présentation ?
 
@@ -226,12 +274,13 @@ Votre avis sur cette présentation ?
 Commentaires, questions?
 
     </textarea>
-    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    <script src="remark.js">
     </script>
     <script>
 var slideshow = remark.create({
     highlightLanguage: "javascript",
-    highlightLines: true
+    highlightLines: true,
+    countIncrementalSlides: false
 });
     </script>
   </body>
