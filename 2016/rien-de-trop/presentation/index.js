@@ -38,7 +38,7 @@ require("spectacle/lib/themes/default/index.css");
 const images = {
   delphes: require('../assets/delphes.jpg'),
   stex: require('../assets/stex.jpg'),
-  asymptote: require('../assets/asymptote.png'),
+  graph: require('../assets/feedbackloop.jpg'),
   possessions: require('../assets/possessions.jpg'),
   digital: require('../assets/digital.jpg')
 };
@@ -108,11 +108,11 @@ export default class Presentation extends React.Component {
             </Appear>
           </Slide>
 
-          <Slide transition={["slide"]} bgColor="secondary">
+          <Slide transition={["slide"]} bgColor="white">
             <Heading size={1} caps textColor="primary">
                 Qui
             </Heading>
-            <Image src={images.asymptote} width="100%" />
+            <Image src={images.graph} width="100%" />
           </Slide>
 
           <Slide transition={["slide"]} bgImage={images.possessions} notes="ce que l'on a de trop => varie de personne a personne, notion de besoins, notion de besoin artificiel vs besoin absolu">
