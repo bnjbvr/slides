@@ -1,10 +1,18 @@
-# Spectacle Boilerplate
+# Rien de trop
 
-## Reference
+Une petite présentation sur la "frugalité comme style de vie", présentation
+effectuée aux JDLL de 2016. Des réflexions sur les motivations, sur l'histoire
+de la frugalité, du minimalisme, sur les questions de qui, quoi, comment, etc.
+
+Si vous utilisez la version de développement (comme spécifiée ci dessous), vous
+pouvez voir le mode présentation pour avoir quelques petits commentaires de
+l'auteur.
+
+## Spectacle
 
 The Spectacle core API is available at [https://github.com/FormidableLabs/spectacle/blob/master/README.markdown](https://github.com/FormidableLabs/spectacle/blob/master/README.markdown).
 
-## Development
+### Development
 
 After downloading the boilerplate, your first order of business is to open terminal and run `npm install`
 
@@ -14,27 +22,7 @@ Then, to start up the local server, run `npm start`
 
 Open a browser and hit [http://localhost:3000](http://localhost:3000), and we are ready to roll
 
-### On Windows
-
-On Windows you might get an error saying
-
-```
-'NODE_ENV' is not recognized as an internal or external command,
-operable program or batch file.
-```
-
-Thus, modify the npm scripts in `package.json` to properly set the `NODE_ENV` environment variable:
-
-```json
-...
-"scripts": {
-    "build": "SET NODE_ENV=production & webpack --config webpack.config.production.js",
-    "start": "SET NODE_ENV=development & node server.js"
-},
-...
-```
-
-## Build & Deployment
+### Build & Deployment
 
 Building the dist version of the project is as easy as running `npm run build`
 
