@@ -3,7 +3,7 @@
 
 <script>
     function f() {
-        fetch('demo-new-format.wasm').then(response =>
+        fetch('/slides/2016/lyonjs-wasm/demo-new-format.wasm').then(response =>
             response.arrayBuffer()
         ).then(buffer => {
             let codeBytes = new Uint8Array(buffer);
