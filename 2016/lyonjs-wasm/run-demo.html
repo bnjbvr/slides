@@ -1,0 +1,19 @@
+<html>
+<body>
+
+<script>
+    function f() {
+        fetch('/demo.wasm').then(response =>
+            response.arrayBuffer()
+        ).then(buffer => {
+            let codeBytes = new Uint8Array(buffer);
+            let instance = Wasm.instantiateModule(codeBytes);
+            alert("1 + 2 = " + instance.exports.add(1, 2));
+        });
+    }
+</script>
+
+<button onclick="javascript:f()">Click me!</button>
+
+</body>
+</html>

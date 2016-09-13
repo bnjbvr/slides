@@ -1,0 +1,21 @@
+<html>
+<body>
+
+<script>
+    function f() {
+        fetch('demo-new-format.wasm').then(response =>
+            response.arrayBuffer()
+        ).then(buffer => {
+            let codeBytes = new Uint8Array(buffer);
+            return WebAssembly.compile(codeBytes);
+        }).then(module => {
+            let instance = new WebAssembly.Instance(module);
+            alert("1 + 2 = " + instance.exports.add(1, 2));
+        });
+    }
+</script>
+
+<button onclick="f()">Click me!</button>
+
+</body>
+</html>

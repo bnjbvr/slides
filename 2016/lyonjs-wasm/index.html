@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebAssembly, une nouvelle cible de compilation pour le Web</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+
+      @import url(/slides/2016/lyonjs-wasm/css/ubuntu-mono.css);
+      @import url(/slides/2016/lyonjs-wasm/css/playfair-display.css);
+
+      body {
+          font-family: 'Playfair Display', serif;
+          /*color: #4c061d;*/
+          color: #ddd;
+          font-size: 1.1em;
+      }
+      h1, h2, h3 {
+          font-weight: normal;
+          color: #aba92a;
+          /*color: #3b3923;*/
+      }
+      .italic {
+          font-style: italic;
+      }
+      .remark-slide-content {
+          /*background-color: #b4c292;*/
+          background-color: #000;
+      }
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.2em;
+      }
+      a {
+          color: #aba92a;
+      }
+      .link a {
+          text-decoration: none;
+          /*color: #4c061d;*/
+          color: #fff;
+      }
+
+      .inline-img {
+          float: left;
+          margin-right: 5px;
+          width: 32%;
+      }
+      .inline-img img {
+          width: 95%;
+      }
+
+      .small-text {
+          font-size: 0.8em;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source" rows="100%" cols="100%">
+
+class: center, middle
+
+# WebAssembly
+
+### Une nouvelle cible de compilation pour le Web
+
+---
+
+background-image: url(./img/firefox.png)
+background-size: 50% auto
+
+---
+
+class: middle, center
+
+# SpiderMonkey
+
+.inline-img[![IonMonkey](img/ion.jpg)]
+
+.inline-img[![OdinMonkey](img/odin.jpg)]
+
+.inline-img[![BaldrMonkey](img/baldr.jpg)]
+
+???
+
+# .link[[@bnjbvr](https://twitter.com/bnjbvr)]
+
+---
+
+class: middle
+
+# Qu'est-ce que WebAssembly ?
+
+- Un **standard** du W3C (CG).
+- Fruit d'une coopération entre Apple, Google, Microsoft et Mozilla.
+- Un format **binaire**...
+    - *compact* ;
+    - *portable* ;
+    - *sûr* ;
+    - rapide à *charger* ;
+    - rapide à *exécuter* ;
+- ... et un format **texte**\*
+    - correspondant directement au format binaire ;
+    - plus simple que du vrai assembleur.
+
+.right.small-text[\*(alerte divulgachâge, `view-source` n'est pas mort).]
+
+---
+
+class: middle
+
+# Plusieurs manières de voir WebAssembly
+
+1. un complément à JavaScript
+2. une cible de compilation
+3. une architecture de processeur *virtuel*
+4. l'évolution d'asm.js
+
+---
+
+class: middle
+
+# Un complément à JavaScript
+
+- Hautes performances
+- Facile à mettre en cache et à partager
+--
+
+- **Idéal** pour des bibliothèques de code !
+
+---
+
+# Usages
+
+- compression d'images ou de vidéos côté client
+- intégration de codecs expérimentaux
+- traitement du signal
+- cryptographie
+- moteurs physiques
+--
+
+- sans compter les **programmes entiers** compilés pour le Web !
+
+---
+
+# Une cible de compilation
+
+- Conçu pour minimiser la *taille du code* (compact) et maximiser la *vitesse de
+compilation*.
+
+--
+- \~langage assembleur.
+    - typé statiquement
+    - plus abstrait qu'un vrai asm
+--
+- stack machine typée.
+    - rapide à compiler (en une passe)
+    - simple à compiler (allocation de registres)
+--
+- encodage postfixe d'un *abstract syntax tree* (**AST**).
+    - simple à valider
+    - simple à afficher sous forme de texte
+--
+- *control flow* structuré.
+    - pas de goto
+    - simplifie beaucoup d'algorithmes
+
+---
+
+# Un processeur virtuel
+
+- Sûreté du code (*sandboxing*)
+    - Pas d'*aliasing* entre les adresses de retour et la mémoire.
+    - Vérification des accès mémoires.
+--
+- Portabilité :
+    - inter-navigateurs
+    - inter-architectures
+    - inter-machines
+--
+- Aussi proche que possible du code machine (pour la performance).
+
+--
+
+`i32.add <=> addl (x86) <=> ADD (ARM)`
+
+--
+
+`call <=> call (x86) <=> BL (ARM)`
+
+---
+
+class: middle
+
+# L'évolution d'asm.js
+
+*Sous-ensemble* de JavaScript, sujet à *validation* et *pré-compilation*,
+hautement optimisable avec des *performances élevées* garanties, issu de la
+compilation de code C/C++.
+
+---
+
+# Juste du JavaScript
+
+```
+function module(global, imports, heap) {
+    "use asm"; // HINT
+    var I32View = new global.Int32Array(heap);
+    var print = imports.print;
+    function f(i) {
+        i = i | 0;
+        var y = 0;
+        y = I32View[i >> 2] | 0;
+        y = i + y | 0;
+        print(y);
+    }
+    return {
+        f: f
+    };
+}
+```
+
+---
+
+# Pourquoi asm.js ?
+
+- Porter facilement des applications C / C++ vers le web (sans tout réécrire).
+
+--
+- Porter des bibliothèques C / C++ vers JavaScript.
+
+--
+- Eviter d'avoir recours à des plugins.
+
+--
+- Tout en obtenant des performances proches du natif.
+
+---
+
+# L'histoire d'asm.js
+
+- 2009-2012 : Mozilla Research commence des expérimentations :
+    - *Emscripten* : ensemble d'outils pour compiler de C/C++ vers JavaScript.
+    - *asm.js* : optimisation du code généré par Emscripten.
+- 2013-2014 :
+    - asm.js publié dans Firefox.
+    - les optimisations prouvent qu'il est possible de lancer des jeux vidéos
+    dans le navigateur.
+- 2015-2016 :
+    - Microsoft Edge implémente la précompilation et des optimisations
+    d'asm.js.
+    - Adobe, AutoDesk, Epic, Facebook, Mega,
+    [Unity](http://beta.unity3d.com/jonas/DT2/) utilisent du code asm.js généré
+    avec Emscripten.
+
+---
+
+# Aller plus loin qu'asm.js
+
+- Support de nouvelles fonctionnalités :
+    - threads (*SharedArrayBuffer*, *Atomics*).
+    - SIMD (*SIMD.js*).
+    - *dynamic linking*.
+--
+- Réduire le temps de compilation.
+
+--
+- Réduire le temps de chargement.
+
+--
+- Réduire l'emprunte mémoire.
+
+--
+- Réduire le fossé avec les performances natives.
+
+---
+
+# WebAssembly comme évolution naturelle
+
+```
+(x + y | 0)             => i32.add
+
+I32View[ptr >> 2] | 0   ~> i32.load
+
+Math.fround(x + y)      => f32.add
+
+???                     => i64.add
+```
+
+---
+
+class: middle
+
+# Travaux en cours
+
+- Spécifié et implémenté de manière incrémentale.
+- Interopérabilité entre Chrome, Edge et Firefox (nightly).
+- Version MVP = asm.js++.
+- [Demo](http://webassembly.github.io/demo)
+
+---
+
+class: middle
+
+# Format texte **temporaire**
+
+.centered[![Exemple de format texte](img/ast-to-sexpr.png)]
+
+---
+
+# Une simple addition
+
+```
+;; wasm source
+(module
+    (func $add (param $lhs i32) (param $rhs i32) (result i32)
+        (i32.add (get_local $lhs) (get_local $rhs))
+    )
+    (export "add" $add)
+)
+```
+
+```
+fetch('demo.wasm').then(response =>
+    response.arrayBuffer()
+).then(buffer => {
+    let codeBytes = new Uint8Array(buffer);
+    // Older API !
+*   let instance = Wasm.instantiateModule(codeBytes);
+    alert("1 + 2 = " + instance.exports.add(1, 2));
+});
+```
+
+[Demo](/slides/2016/lyonjs-wasm/run-demo.html)
+
+---
+
+# Aller plus loin (!)
+
+```
+// integration avec les modules E56
+<script type="module">
+    import add from 'demo.wasm';
+    alert("1 + 2 = " + add(1, 2));
+</script>
+```
+
+```
+fetch('demo.wasm').then(response =>
+    response.arrayBuffer()
+).then(buffer => {
+    let codeBytes = new Uint8Array(buffer);
+*   return WebAssembly.compile(codeBytes);
+}).then(module => {
+*   let instance = new WebAssembly.Instance(module);
+    alert("1 + 2 = " + instance.exports.add(1, 2));
+});
+```
+
+[Demo 2](/slides/2016/lyonjs-wasm/run-demo2.html)
+
+---
+
+class: middle
+
+# Au delà de C++ : Java, .NET...
+
+- Intégration du *garbage-collector*.
+- *TypedObjects* (structures fixes de champs typés).
+- Notifications post-mortem (*finalizers*).
+
+---
+
+class: middle
+
+# ... Ruby, Python
+
+- Support pour des valeurs dynamiques (non typées).
+- *Patching*.
+- Compilation de tous petits morceaux de code.
+
+---
+
+background-image: url(./img/yo-dawg.png)
+background-size: 50% auto
+
+---
+
+class: middle, center
+
+# FAQ
+
+---
+
+class: middle, center
+
+# Quand sortira WebAssembly ?
+
+--
+Fin d'année pour une Release Candidate.
+
+---
+
+class: middle, center
+
+# Pourrait-on avoir un compilateur JS -> wasm ?
+
+--
+Oui, mais c'est équivalent à réimplémenter une VM JS.
+
+---
+
+class: middle, center
+
+## Est-ce la mort de JavaScript ?
+
+--
+Non (à mon humble avis).
+
+- Communauté hyper active autour de JavaScript.
+- JS devient plaisant à utiliser (notamment avec ~~ES6~~ ES2015).
+- Toujours présent dans les navigateurs et langage de prédilection du web.
+
+---
+
+class: middle, center
+
+# Merci de votre attention !
+
+## .link[[https://webassembly.github.io/](https://webassembly.github.io/)]
+
+## .link[[https://github.com/WebAssembly/binaryen](https://github.com/WebAssembly/binaryen)]
+
+## .link[[https://l.benj.me/wasm](https://l.benj.me/wasm)]
+
+## .link[[@bnjbvr](https://twitter.com/bnjbvr)]
+
+
+???
+Comments
+
+    </textarea>
+    <script src="/slides/2016/lyonjs-wasm/js/remark-latest.min.js">
+    </script>
+    <script>
+        var slideshow = remark.create({
+            ratio: '4:3',
+            highlightLanguage: "javascript",
+            highlightLines: true,
+            countIncrementalSlides: false
+        });
+    </script>
+  </body>
+</html>
