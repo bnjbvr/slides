@@ -172,9 +172,9 @@ compilation*.
     - Vérification des accès mémoires.
 --
 - Portabilité :
-    - inter-navigateurs
-    - inter-architectures
-    - inter-machines
+    - inter-navigateurs (Firefox, etc.).
+    - inter-architectures (x64, x86. ARM, etc.).
+    - inter-OS (GNU/Linux, MacOS, etc.).
 --
 - Aussi proche que possible du code machine (pour la performance).
 
@@ -238,7 +238,8 @@ function module(global, imports, heap) {
 # L'histoire d'asm.js
 
 - 2009-2012 : Mozilla Research commence des expérimentations :
-    - *Emscripten* : ensemble d'outils pour compiler de C/C++ vers JavaScript.
+    - *Emscripten* : ensemble d'outils, basés sur `clang` et `LLVM`, pour
+    compiler de C/C++ vers JavaScript.
     - *asm.js* : optimisation du code généré par Emscripten.
 - 2013-2014 :
     - asm.js publié dans Firefox.
