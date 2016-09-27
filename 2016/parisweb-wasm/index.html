@@ -19,23 +19,40 @@
           color: #aba92a;
           /*color: #3b3923;*/
       }
-      .italic {
-          font-style: italic;
+
+      ul {
+          list-style: none;
       }
+
       .remark-slide-content {
           /*background-color: #b4c292;*/
           background-color: #000;
+          font-weight: bold;
       }
+
+      .clear-slide {
+          background-color: #fff;
+          color: #000;
+      }
+      .clear-slide .remark-code {
+          background-color: #fff;
+      }
+      .clear-slide a {
+          color: #333;
+      }
+      .clear-slide h1 {
+          font-style: italic;
+          color: #000;
+      }
+
       .remark-code, .remark-inline-code {
           font-family: 'Ubuntu Mono';
           font-size: 1.2em;
+          font-weight: normal;
       }
+
       a {
-          color: #aba92a;
-      }
-      .link a {
-          text-decoration: none;
-          /*color: #4c061d;*/
+          text-decoration: underline;
           color: #fff;
       }
 
@@ -78,10 +95,6 @@ class: middle, center
 .inline-img[![OdinMonkey](img/odin.jpg)]
 
 .inline-img[![BaldrMonkey](img/baldr.jpg)]
-
-???
-
-# .link[[@bnjbvr](https://twitter.com/bnjbvr)]
 
 ---
 
@@ -223,6 +236,8 @@ compilation de code C/C++.
 
 ---
 
+class: clear-slide
+
 # Juste du JavaScript
 
 ```
@@ -246,6 +261,8 @@ compilation de code C/C++.
 ```
 
 ---
+
+class: clear-slide
 
 # Un indice, chez vous
 
@@ -326,6 +343,8 @@ compilation de code C/C++.
 
 ---
 
+class: clear-slide
+
 # WebAssembly comme évolution naturelle
 
 ```
@@ -353,11 +372,13 @@ class: middle
 
 class: middle
 
-# Format texte **temporaire**
+# Des formats texte **temporaires**
 
 .centered[![Exemple de format texte](img/ast-to-sexpr.png)]
 
 ---
+
+class: clear-slide
 
 # Une simple addition
 
@@ -377,18 +398,20 @@ fetch('demo.wasm').then(response =>
 ).then(bytes => {
 *   let module = new WebAssembly.Module(bytes);
 *   let instance = new WebAssembly.Instance(module);
-    alert("1 + 2 = " + instance.exports.add(1, 2));
+    alert("13 + 37 = " + instance.exports.add(13, 37));
 });
 ```
 
-[Demo](/slides/2016/parisweb-wasm/run-demo.html)
+<button class="right" onclick="javascript:demo()">Demo</button>
 
 ---
 
-# Aller plus loin (!)
+class: clear-slide
+
+# Aller plus loin
 
 ```
-// integration (possible) avec les modules E56
+// integration (possible) avec les modules ES6
 <script type="module">
     import add from 'demo.wasm';
     alert("1 + 2 = " + add(1, 2));
@@ -399,6 +422,8 @@ fetch('demo.wasm').then(response =>
 // Avec des Promises.
 fetch('demo.wasm').then(response =>
     response.arrayBuffer()
+    // ou des streams ?
+    // response.body.getReader()
 ).then(bytes => {
 *   return WebAssembly.compile(bytes);
 }).then(module => {
@@ -414,7 +439,7 @@ class: middle
 # Au delà de C++ : Java, .NET...
 
 - Intégration du *garbage-collector*.
-- *TypedObjects* (~`struct` en C).
+- *[TypedObjects](https://github.com/nikomatsakis/typed-objects-explainer)* (~`struct` en C).
 - Notifications post-mortem (*finalizers*).
 
 ---
@@ -444,7 +469,8 @@ class: middle, center
 
 # Quand sortira WebAssembly ?
 
---
+???
+
 Fin d'année pour une version de démonstration.
 
 ---
@@ -453,7 +479,8 @@ class: middle, center
 
 # Pourrait-on avoir un compilateur JS -> wasm ?
 
---
+???
+
 Oui, mais c'est équivalent à réimplémenter une VM JS.
 
 ---
@@ -462,7 +489,8 @@ class: middle, center
 
 ## Est-ce la mort de JavaScript ?
 
---
+???
+
 Non (à mon humble avis).
 
 - Communauté hyper active autour de JavaScript.
@@ -475,13 +503,13 @@ class: middle, center
 
 # Voir aussi
 
-## .link[[https://webassembly.github.io/](https://webassembly.github.io/)]
+## [https://webassembly.github.io/](https://webassembly.github.io/)
 
-## .link[[https://github.com/WebAssembly](https://github.com/WebAssembly)]
+## [https://github.com/WebAssembly](https://github.com/WebAssembly)
 
-## .link[[https://l.benj.me/pw](https://l.benj.me/pw)]
+## [https://l.benj.me/pw](https://l.benj.me/pw)
 
-## .link[[@bnjbvr](https://twitter.com/bnjbvr)]
+## [@bnjbvr](https://twitter.com/bnjbvr)
 
 ???
 Comments
@@ -496,6 +524,17 @@ Comments
             highlightLines: true,
             countIncrementalSlides: false
         });
+    </script>
+    <script>
+        function demo() {
+            fetch('/slides/2016/parisweb-wasm/demo.wasm').then(response =>
+                response.arrayBuffer()
+            ).then(bytes => {
+                let module = new WebAssembly.Module(bytes);
+                let instance = new WebAssembly.Instance(module);
+                alert("13 + 37 = " + instance.exports.add(13, 37));
+            });
+        }
     </script>
   </body>
 </html>
