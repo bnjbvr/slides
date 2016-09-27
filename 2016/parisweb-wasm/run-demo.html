@@ -1,0 +1,19 @@
+<html>
+<body>
+
+<script>
+    function f() {
+        fetch('/slides/2016/parisweb-wasm/demo.wasm').then(response =>
+            response.arrayBuffer()
+        ).then(bytes => {
+            let module = new WebAssembly.Module(bytes);
+            let instance = new WebAssembly.Instance(module);
+            alert("1 + 2 = " + instance.exports.add(1, 2));
+        });
+    }
+</script>
+
+<button onclick="javascript:f()">Click me!</button>
+
+</body>
+</html>
