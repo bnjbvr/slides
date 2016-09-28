@@ -148,6 +148,8 @@ class: middle
 
 ???
 
+un "assembleur" pour le web, pas un langage de programmation en soi.
+
 format texte :
     - correspondant directement au format binaire ;
     - plus simple que du vrai assembleur.
@@ -159,9 +161,9 @@ class: middle, big
 # Plusieurs manières de voir WebAssembly
 
 1. un complément à JavaScript
-2. une cible de compilation
-3. un jeu d'instructions *virtuel*
-4. l'évolution d'asm.js
+2. l'évolution d'asm.js
+3. une cible de compilation
+4. un jeu d'instructions *virtuel*
 
 ---
 
@@ -203,106 +205,6 @@ class: middle, big
 - cryptographie.
 - moteurs physiques.
 - jeux vidéos.
-
----
-
-class: big
-
-# Une cible de compilation
-
-- Objectifs : compact, rapide à *compiler*.
-
---
-- \~langage assembleur.
-
---
-- *stack machine* typée.
-
---
-- encodage postfixe d'un *abstract syntax tree* (**AST**).
-
---
-- *control flow* structuré.
-
-???
-
-- Conçu pour minimiser la *taille du code* (compact) et maximiser la *vitesse de
-compilation*.
-- \~langage assembleur.
-    - typé statiquement
-    - plus abstrait qu'un vrai asm
-- stack machine typée.
-    - rapide à compiler (en une passe)
-    - simple à compiler (allocation de registres)
-- encodage postfixe d'un *abstract syntax tree* (**AST**).
-    - simple à valider
-    - simple à afficher sous forme de texte
-- *control flow* structuré.
-    - pas de goto
-    - simplifie beaucoup d'algorithmes
-
----
-
-class: big
-
-# Un jeu d'instructions virtuel
-
-- *Sandbox* (mémoire linéaire).
-
---
-- Portable.
-
---
-- Proche du code machine.
-
---
-- Indépendent de l'environnement *hôte*.
-
-???
-
-- Sûreté du code (*sandboxing*)
-    - Pas d'*aliasing* entre les adresses de retour et la mémoire.
-    - Vérification des accès mémoires.
-- Portabilité :
-    - inter-navigateurs (Firefox, etc.).
-    - inter-architectures (x64, x86. ARM, etc.).
-    - inter-OS (Windows, GNU/Linux, MacOS, etc.).
-- Aussi proche que possible du code machine (pour la performance).
-    - tension avec l'objectif de portabilité.
-- Peut s'exécuter dans un environnement Web, ou node, ou ...
-
----
-
-class: middle, not-so-big
-
-# Exemples
-
-<table class="table">
-  <thead>
-    <tr>
-      <th><strong>wasm</strong></th>
-      <th><strong>x86</strong></th>
-      <th><strong>ARM</strong></th>
-    </tr>
-  </thead>
-  <tbody align="center">
-    <tr>
-      <td>i32.add</td>
-      <td>addl</td>
-      <td>ADD</td>
-    </tr>
-    <tr>
-      <td>call</td>
-      <td>call</td>
-      <td>BL</td>
-    </tr>
-    <tr>
-      <td>i32.load8_s</td>
-      <td>(check) + movsb</td>
-      <td>(check) + LDRSB</td>
-    </tr>
-  </tbody>
-</table>
 
 ---
 
@@ -458,6 +360,106 @@ Math.fround(x + y)      => f32.add
 
 ---
 
+class: big
+
+# Une cible de compilation
+
+- Objectifs : compact, rapide à *compiler*.
+
+--
+- \~langage assembleur.
+
+--
+- *stack machine* typée.
+
+--
+- encodage postfixe d'un *abstract syntax tree* (**AST**).
+
+--
+- *control flow* structuré.
+
+???
+
+- Conçu pour minimiser la *taille du code* (compact) et maximiser la *vitesse de
+compilation*.
+- \~langage assembleur.
+    - typé statiquement
+    - plus abstrait qu'un vrai asm
+- stack machine typée.
+    - rapide à compiler (en une passe)
+    - simple à compiler (allocation de registres)
+- encodage postfixe d'un *abstract syntax tree* (**AST**).
+    - simple à valider
+    - simple à afficher sous forme de texte
+- *control flow* structuré.
+    - pas de goto
+    - simplifie beaucoup d'algorithmes
+
+---
+
+class: big
+
+# Un jeu d'instructions virtuel
+
+- *Sandbox* (mémoire linéaire).
+
+--
+- Portable.
+
+--
+- Proche du code machine.
+
+--
+- Indépendent de l'environnement *hôte*.
+
+???
+
+- Sûreté du code (*sandboxing*)
+    - Pas d'*aliasing* entre les adresses de retour et la mémoire.
+    - Vérification des accès mémoires.
+- Portabilité :
+    - inter-navigateurs (Firefox, etc.).
+    - inter-architectures (x64, x86. ARM, etc.).
+    - inter-OS (Windows, GNU/Linux, MacOS, etc.).
+- Aussi proche que possible du code machine (pour la performance).
+    - tension avec l'objectif de portabilité.
+- Peut s'exécuter dans un environnement Web, ou node, ou ...
+
+---
+
+class: middle, not-so-big
+
+# Exemples
+
+<table class="table">
+  <thead>
+    <tr>
+      <th><strong>wasm</strong></th>
+      <th><strong>x86</strong></th>
+      <th><strong>ARM</strong></th>
+    </tr>
+  </thead>
+  <tbody align="center">
+    <tr>
+      <td>i32.add</td>
+      <td>addl</td>
+      <td>ADD</td>
+    </tr>
+    <tr>
+      <td>call</td>
+      <td>call</td>
+      <td>BL</td>
+    </tr>
+    <tr>
+      <td>i32.load8_s</td>
+      <td>(check) + movsb</td>
+      <td>(check) + LDRSB</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
 class: middle, big
 
 # *Work in progress*
@@ -479,10 +481,6 @@ class: middle, center
 # Des formats texte *temporaires*
 
 .centered[![Exemple de format texte](img/ast-to-sexpr.png)]
-
-???
-
-FIXME: refaire image ?
 
 ---
 
