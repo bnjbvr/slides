@@ -142,11 +142,15 @@ class: middle
     - *sûr* ;
     - rapide à *charger* ;
     - rapide à *exécuter* ;
-- ... et un format **texte**\*
-    - correspondant directement au format binaire ;
-    - plus simple que du vrai assembleur.
+- ... et un format **texte**\*.
 
 .right.small-text[\*(alerte divulgachâge, `view-source` n'est pas mort).]
+
+???
+
+format texte :
+    - correspondant directement au format binaire ;
+    - plus simple que du vrai assembleur.
 
 ---
 
@@ -206,8 +210,7 @@ class: big
 
 # Une cible de compilation
 
-- Compact.
-- Rapide à *compiler*.
+- Objectifs : compact, rapide à *compiler*.
 
 --
 - \~langage assembleur.
@@ -296,7 +299,7 @@ class: middle, not-so-big
     <tr>
       <td>i32.load8_s</td>
       <td>(check) + movsb</td>
-      <td>check + LDRSB</td>
+      <td>(check) + LDRSB</td>
     </tr>
   </tbody>
 </table>
@@ -409,7 +412,6 @@ class: big
     [Unity](http://beta.unity3d.com/jonas/DT2/) utilisent du code asm.js généré
     avec Emscripten.
 
-
 ---
 
 class: big
@@ -419,7 +421,7 @@ class: big
 - threads (*SharedArrayBuffer* + *Atomics*).
 - SIMD (*SIMD.js*).
 - *dynamic linking*.
-- `grow_memory`.
+- mémoire élastique.
 
 ---
 
@@ -573,7 +575,7 @@ class: middle, big
 ---
 
 background-image: url(./img/yo-dawg.png)
-background-size: 50% auto
+background-size: 100% auto
 
 ---
 
@@ -605,7 +607,7 @@ Oui, mais c'est équivalent à réimplémenter une VM JS.
 
 class: middle, center
 
-## Est-ce la mort de JavaScript ?
+# Est-ce la mort de JavaScript ?
 
 ???
 
@@ -629,8 +631,15 @@ class: middle, center
 
 ## [@bnjbvr](https://twitter.com/bnjbvr)
 
-???
-Comments
+---
+
+class: middle, center, big
+
+# Bonus : plus de démos
+
+- [DeadTrigger2](http://beta.unity3d.com/jonas/DT2/) (asm.js).
+- [Caesar III](http://epicport.com/en/caesar3) (asm.js).
+- [Angry Bots](http://webassembly.github.io/demo) (wasm/asm.js).
 
     </textarea>
     <script src="/slides/2016/parisweb-wasm/js/remark-latest.min.js">
