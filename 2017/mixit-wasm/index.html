@@ -135,23 +135,25 @@ class: middle
 - Un nouveau **standard** créé en coopération par Apple, Google, Microsoft et
   Mozilla.
 - Un format **binaire** compact, portable, rapide à charger et à *compiler*.
-- Qui s'intègre dans la plateforme Web.
+- Tout ça intégré dans la plateforme Web.
 
 ---
 
-class: middle, center
+class: middle, center, clear-slide
 
 .centered[![Current status](img/browsers.png)]
 
 ---
 
-class: middle
+class: middle, center
 
 # Pourquoi pas Flash / Java Applet / NaCl ?
 
+???
+
 - Friction.
 - Sécurité (*8%*).
-- Pas *weby*.
+- Pas *webby*.
 
 ---
 
@@ -177,7 +179,7 @@ class: middle
 
 ---
 
-class: middle, center
+class: middle, center, clear-slide
 
 # Performances de JavaScript
 
@@ -185,7 +187,7 @@ class: middle, center
 
 ---
 
-class: middle, center
+class: middle, center, clear-slide
 
 # Performances de wasm
 
@@ -197,7 +199,7 @@ class: middle
 
 # Qui produit du wasm ?
 
-- Pas des *humain.e.s*.
+- Pas des *humain·e·s*.
 - LLVM backend.
 - [Emscripten](http://emscripten.org/)
 
@@ -220,26 +222,26 @@ dessous : transparent pour le développeur et pour l'utilisateur.
 
 ---
 
-class: middle, center
+class: middle
 
 # Une fonctionnalité portée vers JS
 
 [argon2-browser](https://github.com/antelle/argon2-browser)
 
-```js
+```
 argon2.hash({ pass: 'password', salt: 'somesalt' })
-    .then(h => console.log(h.hash, h.hashHex, h.encoded))
-    .catch(e => console.error(e.message, e.code))
+      .then(h => console.log(h.hash, h.hashHex, h.encoded))
+      .catch(e => console.error(e.message, e.code))
 ```
 
 ???
 
-Taille de code : wasm 40% plus petit que JS équivalent.
-Vitesse : jusqu'à 80% plus rapide que du JS.
+Taille de code : wasm plus de 2 fois plus petit que JS équivalent.
+Vitesse : jusqu'à 80% speedup = 5 fois plus rapide que du JS.
 
 ---
 
-class: middle, center
+class: middle, big
 
 # Un composant entier porté vers wasm
 
@@ -248,23 +250,30 @@ class: middle, center
 ???
 
 - PlayCanvas + Bullet
-- React Fiber?
+- React Fiber
 
 ---
 
-class: middle, center
+class: middle
 
 # HTML pour l'UI, wasm pour la logique
 
 [AutoCAD](http://www.autodesk.com/products/autocad/overview)
 
-.centered[![Current status](img/autocad-tweet.png)]
+<blockquote class="twitter-tweet" data-lang="fr">
+  <p lang="en" dir="ltr">
+    <a href="https://twitter.com/linclark">@linclark</a>
+      We have a web assembly build of AutoCAD that we&#39;d like to showcase ... any advice or ideas on who
+      we could talk to?
+  </p>&mdash; Cameron Westland (@camwest)
+  <a href="https://twitter.com/camwest/status/851582190747959296">10 avril 2017</a>
+</blockquote>
 
 ---
 
-class: middle, center
+class: middle, big
 
-# Un projet C++ entièrement porté vers wasm
+# Un projet C++ porté vers wasm
 
 [Unity](http://unity3d.com) - [ZenGarden demo](https://s3.amazonaws.com/mozilla-games/ZenGarden/EpicZenGarden.html)
 
@@ -280,12 +289,12 @@ class: middle, big
 
 # Domaines d'usage
 
-- compression d'images ou de vidéos côté client.
-- intégration de codecs expérimentaux.
-- traitement du signal.
-- cryptographie.
-- moteurs physiques.
-- jeux vidéos.
+- Compression d'images ou de vidéos côté client
+- Intégration de codecs expérimentaux
+- Traitement du signal
+- Chiffrement
+- Moteurs physiques
+- Jeux vidéo
 
 ---
 
@@ -293,8 +302,8 @@ class: middle, big
 
 # Et dans le futur ?
 
-- GC.
-- Threads + *SharedArrayBuffer*.
+- Garbage Collector.
+- Threads + ```SharedArrayBuffer```.
 - SIMD.
 
 ???
@@ -311,19 +320,9 @@ class: middle, center
 
 class: middle, center
 
-# Pourrait-on avoir une conversion JS -> wasm ?
-
-???
-
-Oui, mais c'est équivalent à réimplémenter une VM JS.
-
----
-
-class: middle, center
-
 # Pourrait-on avoir un compilateur X -> wasm ?
 
-où X = Elm, Kotlin, Java, Python, etc.
+où X = JavaScript, Elm, Kotlin, Java, Python, etc.
 
 ---
 
@@ -347,9 +346,9 @@ class: middle, big
 
 - wasm est un **format binaire** et un **environnement d'exécution**
 - proche des **performances natives**
-- utilisable **dés aujourd'hui**
+- utilisable **dès aujourd'hui**
 - **simple et transparent** pour utilisateurs et développeurs
-- qui nous permettra d'utiliser **tous les langages** dans le navigateur.
+- wasm nous permettra d'utiliser **tous les langages** dans le navigateur
 
 ---
 
@@ -357,9 +356,7 @@ class: middle
 
 # Références
 
-## [A cartoon intro to WebAssembly](https://hacks.mozilla.org/category/a-cartoon-intro-to-webassembly/)
-
-## [FR](https://tech.mozfr.org/post/2017/03/08/Une-introduction-cartoonesque-a-WebAssembly)
+## [A cartoon intro to WebAssembly](https://hacks.mozilla.org/category/a-cartoon-intro-to-webassembly/) (images) [(FR)](https://tech.mozfr.org/post/2017/03/08/Une-introduction-cartoonesque-a-WebAssembly)
 
 ## [WebAssembly, a game changer for the web](https://www.youtube.com/watch?v=MaJCfdmr9Wg&list=PLo3w8EB99pqJNeb-FGiFbQpoX3Lo3YOIm)
 
@@ -381,7 +378,7 @@ class: middle, center
 
 # Les sources
 
-## [https://l.benj.me/mixit](https://l.benj.me/mixit)
+## [https://frama.link/mixit-wasm](https://frama.link/mixit-wasm)
 
 ## [bnjbvr.github.io/slides/2017/mixit-wasm](bnjbvr.github.io/slides/2017/mixit-wasm)
 
@@ -396,5 +393,6 @@ class: middle, center
             countIncrementalSlides: false
         });
     </script>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </body>
 </html>
