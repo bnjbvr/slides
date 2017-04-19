@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebAssembly pour les développeurs</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+
+      @import url(/slides/2017/mixit-wasm/css/ubuntu-mono.css);
+      @import url(/slides/2017/mixit-wasm/css/playfair-display.css);
+
+      body {
+          font-family: 'Playfair Display', serif;
+          /*color: #4c061d;*/
+          color: #ddd;
+          font-size: 1.1em;
+      }
+      h1, h2, h3 {
+          font-weight: normal;
+          color: #bcdeff;
+          /*color: #aba92a;*/
+          /*color: #3b3923;*/
+      }
+
+      ul {
+          list-style: none;
+          padding-left: 0;
+      }
+      ul ul {
+          padding-left: 3vw;
+      }
+      li {
+          margin-top: 0.5em;
+      }
+
+      strong {
+          color: #c33;
+      }
+      button {
+          float: right;
+      }
+
+      .remark-slide-content {
+          /*background-color: #b4c292;*/
+          background-color: #000;
+          font-weight: 600;
+      }
+
+      .clear-slide {
+          background-color: #fff;
+          color: #000;
+      }
+      .clear-slide .remark-code {
+          background-color: #fff;
+      }
+      .clear-slide a {
+          color: #333;
+      }
+      .clear-slide h1 {
+          font-style: italic;
+          color: #000;
+      }
+
+      .big {
+          font-size: 2em;
+      }
+      .big .remark-slide-number {
+          font-size: 0.55em; /* bleh */
+      }
+
+      .not-so-big {
+          font-size: 1.5em;
+      }
+      .not-so-big .remark-slide-number {
+          font-size: 0.75em; /* bleh */
+      }
+      .table {
+          width: 100%;
+      }
+
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.2em;
+          font-weight: normal;
+      }
+
+      a {
+          text-decoration: underline;
+          color: #fff;
+      }
+
+      .inline-img {
+          float: left;
+          margin-right: 5px;
+          width: 32%;
+      }
+      .inline-img img {
+          width: 95%;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source" rows="100%" cols="100%">
+
+class: center, middle
+
+# WebAssembly pour les développeurs
+
+---
+
+background-image: url(./img/firefox.png)
+background-size: 50% auto
+
+# [@bnjbvr](https://twitter.com/bnjbvr)
+
+---
+
+class: middle, center
+
+# SpiderMonkey
+
+.inline-img[![IonMonkey](img/ion.jpg)]
+
+.inline-img[![OdinMonkey](img/odin.jpg)]
+
+.inline-img[![BaldrMonkey](img/baldr.jpg)]
+
+---
+
+class: middle
+
+# C'est quoi **W**eb**AS**se**M**bly ?
+
+- Un **environnement d'exécution** rapide, stable, bien défini, aux
+  performances proches du natif.
+- Un nouveau **standard** créé en coopération par Apple, Google, Microsoft et
+  Mozilla.
+- Un format **binaire** compact, portable, rapide à charger et à *compiler*.
+- Qui s'intègre dans la plateforme Web.
+
+---
+
+class: middle, center
+
+.centered[![Current status](img/browsers.png)]
+
+---
+
+class: middle
+
+# Pourquoi pas Flash / Java Applet / NaCl ?
+
+- Friction.
+- Sécurité (*8%*).
+- Pas *weby*.
+
+---
+
+class: middle
+
+# A quels besoins répond WebAssembly ?
+
+- Performances à l'exécution.
+- Taille de programme plus petite.
+- Rapidité de démarrage.
+- Nouvelles fonctionnalités.
+
+---
+
+class: middle
+
+# Et sans les défauts...
+
+- Aucune friction...
+- ... juste du Web !
+- Un format *texte*.
+- Un polyfill : [asm.js](http://asmjs.org).
+
+---
+
+class: middle, center
+
+# Performances de JavaScript
+
+.centered[![JS perf](img/js-perf.png)]
+
+---
+
+class: middle, center
+
+# Performances de wasm
+
+.centered[![JS vs wasm perf](img/js-wasm-perf.png)]
+
+---
+
+class: middle
+
+# Qui produit du wasm ?
+
+- Pas des *humain.e.s*.
+- LLVM backend.
+- [Emscripten](http://emscripten.org/)
+
+---
+
+class: middle, center
+
+# Une [démo](https://wasdk.github.io/WasmFiddle/?eq4qv) des outils
+
+---
+
+class: middle, center
+
+# Un spectre de cas d'utilisation
+
+???
+
+Dans tous les cas, pas besoin de se soucier de comment c'est implémenté en
+dessous : transparent pour le développeur et pour l'utilisateur.
+
+---
+
+class: middle, center
+
+# Une fonctionnalité portée vers JS
+
+[argon2-browser](https://github.com/antelle/argon2-browser)
+
+```js
+argon2.hash({ pass: 'password', salt: 'somesalt' })
+    .then(h => console.log(h.hash, h.hashHex, h.encoded))
+    .catch(e => console.error(e.message, e.code))
+```
+
+???
+
+Taille de code : wasm 40% plus petit que JS équivalent.
+Vitesse : jusqu'à 80% plus rapide que du JS.
+
+---
+
+class: middle, center
+
+# Un composant entier porté vers wasm
+
+[PlayCanvas](https://playcanvas.com) - [Video](https://www.youtube.com/watch?v=TT7ugKuUMv0)
+
+???
+
+- PlayCanvas + Bullet
+- React Fiber?
+
+---
+
+class: middle, center
+
+# HTML pour l'UI, wasm pour la logique
+
+[AutoCAD](http://www.autodesk.com/products/autocad/overview)
+
+.centered[![Current status](img/autocad-tweet.png)]
+
+---
+
+class: middle, center
+
+# Un projet C++ entièrement porté vers wasm
+
+[Unity](http://unity3d.com) - [ZenGarden demo](https://s3.amazonaws.com/mozilla-games/ZenGarden/EpicZenGarden.html)
+
+???
+
+- Imprime les images dans une canvas
+- tous les appels vers des libs C++ externes sont retranscrits en appels à des
+APIs Web.
+
+---
+
+class: middle, big
+
+# Domaines d'usage
+
+- compression d'images ou de vidéos côté client.
+- intégration de codecs expérimentaux.
+- traitement du signal.
+- cryptographie.
+- moteurs physiques.
+- jeux vidéos.
+
+---
+
+class: middle, big
+
+# Et dans le futur ?
+
+- GC.
+- Threads + *SharedArrayBuffer*.
+- SIMD.
+
+???
+
+choix du langage + interopérabilité entre tous les langages.
+
+---
+
+class: middle, center
+
+# FAQ
+
+---
+
+class: middle, center
+
+# Pourrait-on avoir une conversion JS -> wasm ?
+
+???
+
+Oui, mais c'est équivalent à réimplémenter une VM JS.
+
+---
+
+class: middle, center
+
+# Pourrait-on avoir un compilateur X -> wasm ?
+
+où X = Elm, Kotlin, Java, Python, etc.
+
+---
+
+class: middle, center
+
+# Est-ce la fin de JavaScript ?
+
+???
+
+Non (à mon humble avis).
+
+- Communauté hyper active autour de JavaScript.
+- JS devient *plaisant* à utiliser (notamment avec ~~ES6~~ ES2015).
+- Toujours présent dans les navigateurs et langage de prédilection du web.
+
+---
+
+class: middle, big
+
+# TL;DR
+
+- wasm est un **format binaire** et un **environnement d'exécution**
+- proche des **performances natives**
+- utilisable **dés aujourd'hui**
+- **simple et transparent** pour utilisateurs et développeurs
+- qui nous permettra d'utiliser **tous les langages** dans le navigateur.
+
+---
+
+class: middle
+
+# Références
+
+## [A cartoon intro to WebAssembly](https://hacks.mozilla.org/category/a-cartoon-intro-to-webassembly/)
+
+## [FR](https://tech.mozfr.org/post/2017/03/08/Une-introduction-cartoonesque-a-WebAssembly)
+
+## [WebAssembly, a game changer for the web](https://www.youtube.com/watch?v=MaJCfdmr9Wg&list=PLo3w8EB99pqJNeb-FGiFbQpoX3Lo3YOIm)
+
+## [WasmFiddle](https://wasdk.github.io/WasmFiddle/)
+
+---
+
+class: middle
+
+# La communauté wasm
+
+## [https://webassembly.github.io/](https://webassembly.github.io/)
+
+## [https://github.com/WebAssembly](https://github.com/WebAssembly)
+
+---
+
+class: middle, center
+
+# Les sources
+
+## [https://l.benj.me/mixit](https://l.benj.me/mixit)
+
+## [bnjbvr.github.io/slides/2017/mixit-wasm](bnjbvr.github.io/slides/2017/mixit-wasm)
+
+    </textarea>
+    <script src="/slides/2017/mixit-wasm/js/remark-latest.min.js">
+    </script>
+    <script>
+        var slideshow = remark.create({
+            ratio: '4:3',
+            highlightLanguage: "javascript",
+            highlightLines: true,
+            countIncrementalSlides: false
+        });
+    </script>
+  </body>
+</html>
