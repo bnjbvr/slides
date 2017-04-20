@@ -88,12 +88,21 @@
           color: #fff;
       }
 
-      .inline-img {
+      .inline-img-3 {
           float: left;
           margin-right: 5px;
           width: 32%;
       }
-      .inline-img img {
+      .inline-img-3 img {
+          width: 95%;
+      }
+
+      .inline-img-2 {
+          float: left;
+          margin-right: 5px;
+          width: 49%;
+      }
+      .inline-img-2 img {
           width: 95%;
       }
     </style>
@@ -103,14 +112,16 @@
 
 class: center, middle
 
-# WebAssembly pour les développeurs
+# WebAssembly pour les développeur·euse·s
+
+.centered[![wasm logo](img/logo.png)]
 
 ---
 
 background-image: url(./img/firefox.png)
 background-size: 50% auto
 
-# [@bnjbvr](https://twitter.com/bnjbvr)
+# @bnjbvr
 
 ---
 
@@ -118,38 +129,37 @@ class: middle, center
 
 # SpiderMonkey
 
-.inline-img[![IonMonkey](img/ion.jpg)]
+.inline-img-3[![IonMonkey](img/ion.jpg)]
 
-.inline-img[![OdinMonkey](img/odin.jpg)]
+.inline-img-3[![OdinMonkey](img/odin.jpg)]
 
-.inline-img[![BaldrMonkey](img/baldr.jpg)]
+.inline-img-3[![BaldrMonkey](img/baldr.jpg)]
 
 ---
-
-class: middle
 
 # C'est quoi **W**eb**AS**se**M**bly ?
 
 - Un **environnement d'exécution** rapide, stable, bien défini, aux
   performances proches du natif.
+--
+
 - Un nouveau **standard** créé en coopération par Apple, Google, Microsoft et
   Mozilla.
+
+--
 - Un format **binaire** compact, portable, rapide à charger et à *compiler*.
+
+--
 - Tout ça intégré dans la plateforme Web.
 
 ---
 
-class: middle, center, clear-slide
-
-.centered[![Current status](img/browsers.png)]
-
----
-
-class: middle, center
-
-# Pourquoi pas Flash / Java Applet / NaCl ?
+background-image: url(./img/flashplayermissing.jpg)
+background-size: 100% auto
 
 ???
+
+Pourquoi pas Flash / applets / NaCl?
 
 - Friction.
 - Sécurité (*8%*).
@@ -161,43 +171,64 @@ class: middle
 
 # A quels besoins répond WebAssembly ?
 
-- Performances à l'exécution.
+- Performances à l'exécution, proches du natif (x1.2).
 - Taille de programme plus petite.
-- Rapidité de démarrage.
-- Nouvelles fonctionnalités.
+- Rapidité de démarrage (surtout sur mobile).
+- Nouvelles fonctionnalités (int64).
 
 ---
 
-class: middle
+class: center, middle
 
 # Et sans les défauts...
 
+???
+
 - Aucune friction...
-- ... juste du Web !
-- Un format *texte*.
-- Un polyfill : [asm.js](http://asmjs.org).
+- ... juste le Web !
+- Un format *texte* équivalent.
+
+---
+
+background-image: url(./img/browsers.png)
+background-size: 100% auto
+class: clear-slide, center
+
+(image : Lin Clark)
+
+---
+
+background-image: url(./img/asmjs.png)
+background-size: 40% auto
+class: center, clear-slide
+
+(image : acko.net)
+
+???
+
+- Un polyfill optionnel : [asm.js](http://asmjs.org).
 
 ---
 
 class: middle, center, clear-slide
 
-# Performances de JavaScript
+# Pourquoi c'est plus rapide ?
 
 .centered[![JS perf](img/js-perf.png)]
-
----
-
-class: middle, center, clear-slide
-
-# Performances de wasm
-
 .centered[![JS vs wasm perf](img/js-wasm-perf.png)]
 
+(images : Lin Clark)
+
 ---
 
-class: middle
+class: middle, center
 
 # Qui produit du wasm ?
+
+.inline-img-2[![LLVM](img/llvm.png)]
+.inline-img-2[![Emscripten](img/emscripten.png)]
+
+???
 
 - Pas des *humain·e·s*.
 - LLVM backend.
@@ -208,6 +239,22 @@ class: middle
 class: middle, center
 
 # Une [démo](https://wasdk.github.io/WasmFiddle/?eq4qv) des outils
+
+---
+
+class: middle
+
+# Les APIs
+
+```js
+WebAssembly.compile(binary: ArrayBuffer)
+    -> Promise<WebAssembly.Module>
+
+WebAssembly.instantiate(
+    module: WebAssembly.Module,
+    imports?: Object
+) -> Promise<WebAssembly.Instance>
+```
 
 ---
 
@@ -226,7 +273,7 @@ class: middle
 
 # Une fonctionnalité portée vers JS
 
-[argon2-browser](https://github.com/antelle/argon2-browser)
+### [argon2-browser](https://github.com/antelle/argon2-browser)
 
 ```
 argon2.hash({ pass: 'password', salt: 'somesalt' })
@@ -245,7 +292,9 @@ class: middle, big
 
 # Un composant entier porté vers wasm
 
-[PlayCanvas](https://playcanvas.com) - [Video](https://www.youtube.com/watch?v=TT7ugKuUMv0)
+[PlayCanvas](https://playcanvas.com)
+
+<iframe width="100%" height="100%" src="https://www.youtube.com/embed/TT7ugKuUMv0" frameborder="0" allowfullscreen></iframe>
 
 ???
 
@@ -275,7 +324,7 @@ class: middle, big
 
 # Un projet C++ porté vers wasm
 
-[Unity](http://unity3d.com) - [ZenGarden demo](https://s3.amazonaws.com/mozilla-games/ZenGarden/EpicZenGarden.html)
+[Unity](http://unity3d.com) - [ZenGarden demo](/slides/2017/mixit-wasm/zengarden/EpicZenGarden.html)
 
 ???
 
@@ -302,19 +351,29 @@ class: middle, big
 
 # Et dans le futur ?
 
-- Garbage Collector.
-- Threads + ```SharedArrayBuffer```.
-- SIMD.
+- Accès direct au DOM
+- Garbage Collector
+- Threads + ```SharedArrayBuffer```
+- SIMD
+
+---
+
+background-image: url(./img/lotr.jpg)
+background-size: 50% auto
+class: center
+
+# Un "langage" pour les gouverner tous
 
 ???
 
-choix du langage + interopérabilité entre tous les langages.
+- choix du langage + interopérabilité entre tous les langages.
+- indépendence vis à vis de la plateforme
 
 ---
 
 class: middle, center
 
-# FAQ
+# 17 Questions Que Vous Allez Vous Poser, La Réponse À La #2 Va Vous Étonner
 
 ---
 
@@ -322,13 +381,18 @@ class: middle, center
 
 # Pourrait-on avoir un compilateur X -> wasm ?
 
-où X = JavaScript, Elm, Kotlin, Java, Python, etc.
+où X = JavaScript, Elm, Kotlin, Java, Python, Brainf**k, etc.
 
 ---
 
 class: middle, center
 
 # Est-ce la fin de JavaScript ?
+
+---
+
+background-image: url(./img/js-wasm-logo.png)
+background-size: 30% auto
 
 ???
 
@@ -348,7 +412,7 @@ class: middle, big
 - proche des **performances natives**
 - utilisable **dès aujourd'hui**
 - **simple et transparent** pour utilisateurs et développeurs
-- wasm nous permettra d'utiliser **tous les langages** dans le navigateur
+- **universel**
 
 ---
 
@@ -374,13 +438,20 @@ class: middle
 
 ---
 
-class: middle, center
+class: middle
 
 # Les sources
+
+<a rel="license"
+   href="http://creativecommons.org/publicdomain/zero/1.0/">
+  <img src="https://licensebuttons.net/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" />
+</a>
 
 ## [https://frama.link/mixit-wasm](https://frama.link/mixit-wasm)
 
 ## [bnjbvr.github.io/slides/2017/mixit-wasm](bnjbvr.github.io/slides/2017/mixit-wasm)
+
+## [@bnjbvr](https://twitter.com/bnjbvr)
 
     </textarea>
     <script src="/slides/2017/mixit-wasm/js/remark-latest.min.js">
