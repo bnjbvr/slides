@@ -14,6 +14,7 @@
           color: #ddd;
           font-size: 1.1em;
       }
+
       h1, h2, h3 {
           font-weight: normal;
           color: #bcdeff;
@@ -33,7 +34,7 @@
       }
 
       strong {
-          color: #c33;
+          color: #fffd61;
       }
       button {
           float: right;
@@ -61,18 +62,12 @@
       }
 
       .big {
-          font-size: 2em;
+          font-size: 2rem;
       }
       .big .remark-slide-number {
-          font-size: 0.55em; /* bleh */
+          font-size: 20px;
       }
 
-      .not-so-big {
-          font-size: 1.5em;
-      }
-      .not-so-big .remark-slide-number {
-          font-size: 0.75em; /* bleh */
-      }
       .table {
           width: 100%;
       }
@@ -137,6 +132,8 @@ class: middle, center
 
 ---
 
+class: big
+
 # C'est quoi **W**eb**AS**se**M**bly ?
 
 - Un **environnement d'exécution** rapide, stable, bien défini, aux
@@ -179,7 +176,7 @@ class: center, middle
 
 ---
 
-class: middle
+class: middle, big
 
 # A quels besoins répond WebAssembly ?
 
@@ -215,20 +212,21 @@ class: middle, center, clear-slide
 # Pourquoi c'est plus rapide ?
 
 .centered[![JS perf](img/js-perf.png)]
+
 .centered[![JS vs wasm perf](img/js-wasm-perf.png)]
 
 (images : Lin Clark)
 
 ---
 
-class: middle, center
+class: middle, center, big
 
 # Qui produit du wasm ?
 
 .inline-img-2[![LLVM](img/llvm.png)]
 .inline-img-2[![Emscripten](img/emscripten.png)]
 
-(mais aussi en cours : TeaVM, Cheerp, GCC, Faust...)
+(TeaVM, Cheerp, GCC, Faust...)
 
 ???
 
@@ -305,7 +303,7 @@ class: middle, big
 
 ---
 
-class: middle
+class: middle, big
 
 # HTML pour l'UI, wasm pour la logique
 
@@ -359,11 +357,13 @@ background-size: 100% auto
 
 class: middle, center
 
-# 17 Questions Que Vous Allez Vous Poser, La Réponse À La #2 Va Vous Étonner
+# 100 Questions Que Vous Allez Vous Poser
+
+## La #2 Va Vous Étonner
 
 ---
 
-class: middle, center
+class: middle, center, big
 
 # Pourrait-on avoir un compilateur X -> wasm ?
 
