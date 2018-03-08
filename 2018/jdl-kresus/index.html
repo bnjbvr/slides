@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kresus, une application libre de gestion de finances personnelles</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Playfair+Display);
+
+      body {
+          font-family: 'Playfair Display', serif;
+          color: #4c061d;
+      }
+
+      h1, h2, h3 {
+          font-weight: normal;
+          color: #3b3923;
+      }
+
+      .remark-slide-content {
+          background-color: #b4c292;
+      }
+
+      .link a {
+          text-decoration: none;
+          color: #4c061d;
+      }
+
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.4em;
+      }
+
+      .bigger {
+          font-size: 1.8em;
+      }
+      .bigger img {
+          height: 10em;
+      }
+
+    </style>
+  </head>
+  <body>
+    <textarea id="source" rows="100%" cols="100%">
+
+class: center, middle
+
+# Kresus
+
+### Get rich, or die codin'
+
+???
+
+Notes de celui qui parle. Si vous voyez cela, il y a un raté quelque part.
+
+---
+
+background-image: url(./img/firefox.png)
+background-size: 50% auto
+
+# .link[[@bnjbvr](https://twitter.com/bnjbvr)]
+
+.left[much coffee]
+
+.right[very mozilla]
+
+.left[so much floss]
+
+.bigger.right[wow]
+
+
+???
+
+Je suis ingénieur logiciel, travaille pour mozilla, je raconte ma vie,
+blablabla on n'est pas là pour écouter ma biographie.
+
+Mais de quoi va-t-on parler aujourd'hui ? De mon temps libre, ou de ce qu'il en
+restait. On va parler PFM.
+
+---
+
+background-image: url(./img/linxo.png)
+
+???
+
+- Linxo, application web de gestion de finances personnelles
+- on passe son login/mot de passe, gratuitement, on obtient des statistiques
+intéressantes sur ses dépenses.
+- problème, on passe son mot de passe bancaire
+- et ces logiciels sont souvent gratuits... si c'est gratuit, c'est toi le
+produit !
+- Dans ma todo list de 2013, je note "faire une application de gestion de
+finances personnelles" open-source, libre, collaboratif.
+
+---
+
+background-image: url(./img/weboob.png)
+background-size: 100% auto
+
+# WEB Outside Of Browsers
+
+???
+
+- scrapper de sites webs, avec des modules dédiés
+- bonne communauté, active et réactive
+- tout en CLI, rebute les débutants
+- fournit des APIs, beaucoup d'applis basées dessus
+
+---
+
+background-image: url(./img/cozypfm.png)
+background-size: 100% auto
+
+# cozy-pfm
+
+???
+
+- Fast forward: CozyCloud, plateforme libre de cloud personnel, propose une
+application bancaire, cozy-pfm !
+- cozy-pfm utilise en arrière plan weboob, une bibliothèque et séries de
+logiciels de navigation headless et scraping.
+- mais plus maintenu
+- recherche un peu lente
+- détection des doublons un peu triviale, pas de possibilité de gérer ça
+soi-même.
+- code difficile à suivre (backbone)
+
+---
+
+class: top, center, bigger
+
+# Ainsi naquit Kresus !
+
+![logo temporaire](./img/kresus.svg)
+
+\* Logo temporaire, toute aide est la bienvenue
+
+???
+
+- Fork de cozy-pfm
+- Tout le client / frontend est reecrit avec ReactJS
+- ajout d'une gestion manuelle des doublons
+
+---
+
+class: middle, center
+
+# [L'instant demo !](https://demo.kresus.org)
+
+???
+
+- Historique long.
+- Recherche texte avec statistiques.
+- Graphes de dépenses / rentrées.
+- Visualisation de l'évolution du solde.
+- Alertes sur montants des opérations.
+- Alertes sur soldes des comptes.
+- Rapports emails.
+
+---
+
+class: top, left, bigger
+
+# Les nouveautés récentes
+
+- Plus simple à installer
+- Une gestion des thèmes
+- Mise à jour de l'interface
+- Gestion plus fine des budgets et soldes
+- [Meilleure procédure d'accompagnement](./onboarding.mov)
+
+---
+
+background-image: url(img/light-theme.png)
+background-size: 100% auto
+
+---
+
+class: middle, center
+
+# Le problème d'un PFM ?
+
+???
+
+A votre avis, quel est le plus gros problème d'un PFM ?
+
+- weboob produit un instantané de l'état des comptes à un instant T
+- kresus essaie de produire une vidéo
+- donc il faut combler les trous
+
+---
+
+background-image: url(img/doublons.jpg)
+background-size: auto 100%
+
+???
+
+Les doublons, bien sûr !
+
+- les banques ajoutent des informations au cours du temps
+- détection naïve : si la date de l'opération, le libellé et le montant sont
+les mêmes, considérer qu'une opération est un doublon et ne pas l'insérer dans
+les données.
+- ça marche, dans 95% des cas.
+
+---
+
+class: bigger
+
+# Les cas pénibles
+
+- Faux positif :
+
+--
+    - Mêmes opérations le même jour avec le même montant.
+--
+- Faux négatif :
+
+--
+    - Le libellé change.
+--
+    - La date change.
+--
+    - Le montant change.
+
+--
+### On ne peut faire confiance à personne !
+
+???
+
+Dans le futur, ajout d'un algorithme super baleize super malin super génial de
+détection des doublons : effectuer une sorte de diff entre les opérations déjà
+présentes et les opérations du cliché; rapprocher les opérations orphelines à
+la main à grands coups d'heuristiques.
+
+---
+
+class: middle, center
+
+# Le point sécurité
+
+![la sécurité c'est important](img/securite.png)
+
+???
+
+Compromis : si on veut la récupération automatique des opérations, il faut
+avoir accès au mot de passe, de manière directe ou indirecte. Pas de panacée.
+
+---
+
+background-image: url(img/communaute.jpg)
+background-size: 100% auto
+
+# Communauté
+
+???
+
+- Kresus est libre et open-source
+- Ecrit en JavaScript / ES6, utilise React et node côté serveur.
+- Plusieurs contributeurs réguliers (autres que moi).
+- On avance sur un logo.
+- Beaucoup de tickets et retours de la communauté.
+
+---
+
+class: middle, center
+
+# Q&A
+
+---
+
+class: middle, center
+
+# Merci !
+
+### .link[[bnjbvr.github.io/slides/2018/jdl-kresus](https://bnjbvr.github.io/slides/2018/jdl-kresus)]
+### le forum : .link[[community.kresus.org](https://community.kresus.org)]
+### le code : .link[[bnjbvr/kresus](https://framagit.org/bnjbvr/kresus)]
+### le canal IRC : .link[[#kresus](https://kiwiirc.com/client/irc.freenode.net/#kresus)]
+
+Votre avis sur cette présentation ?
+
+???
+
+Commentaires, questions?
+
+    </textarea>
+    <script src="remark.js">
+    </script>
+    <script>
+var slideshow = remark.create({
+    highlightLanguage: "javascript",
+    highlightLines: true,
+    countIncrementalSlides: false
+});
+    </script>
+  </body>
+</html>
