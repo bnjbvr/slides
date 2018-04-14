@@ -12,10 +12,6 @@
           background-color: #0d47a1;
       }
 
-      .white-bg {
-          background-color: #ffffff;
-      }
-
       body {
           font-family: 'Roboto', serif;
           color: #e8eaf6;
@@ -33,6 +29,11 @@
       a {
           text-decoration: none;
           color: #f86728;
+      }
+
+      .white-bg, .white-bg h1 {
+          background-color: white;
+          color: black;
       }
 
       blockquote {
@@ -53,6 +54,9 @@
       }
       .bigger img {
           height: 10em;
+      }
+      .bigger .remark-slide-number {
+          font-size: 20px;
       }
 
     </style>
@@ -150,6 +154,145 @@ class: bigger
 --
 ### Tout ça intégré dans la plateforme Web.
 
+
+---
+
+class: middle, center, white-bg
+
+# Support des navigateurs
+
+--
+
+![Dans tous les navigateurs](./img/browsers.png)
+
+???
+
+A l'heure de l'écriture, représente 71% des navigateurs selon CanIUse.
+
+Désactivé (?) dans Safari pour iOS dernière version, devrait être réactivé
+bientôt.
+
+---
+
+class: middle
+
+# C'est efficace ?
+
+--
+
+## plus rapide à démarrer
+
+--
+
+## plus rapide à s'exécuter
+
+--
+
+## plus compact
+
+--
+
+## debuggable
+
+???
+
+Démarrage : pas de parsing, pas d'exécution lazy, tiered compilation, streaming
+compilation, mise en cache.
+
+Exécution : langage statique typé, correspondance directe avec le CPU, pas
+d'allocation mémoire (GC), précompilation par un gros compilateur. On est
+seulement à un petit écart de 20% des performances natives, et ça n'arrête pas
+d'évoluer !
+
+Compact : binaire, moins à télécharger, moins de représentations internes en
+mémoire, moins à stocker en mémoire, économie en bande-passante donc coûts
+serveurs.
+
+Debugable : format binaire, mais représentation textuelle pour pouvoir
+inspecter le code source et le deboguer ! et source maps !
+
+---
+
+# Cas d'utilisation
+
+## Porter des [programmes complets](https://www.youtube.com/watch?v=TwuIRcpeUWE)
+
+--
+
+## Porter des [libs](https://websightjs.com/index-video.html)
+
+--
+
+## Utilisation dans des [libs](https://www.youtube.com/watch?v=qfnkDyHVJzs&feature=youtu.be&t=5880)
+
+--
+
+## Utilisation dans des [apps web](http://www.adultswim.com/etcetera/elastic-man)
+
+???
+
+Programmes complets : Unity / Unreal Engine.
+
+Porter des libs : OpenCV, NaCL (crypto), etc.
+
+Utilisation dans des libs : React pour Fiber, Glimmer VM pour Ember, etc.
+
+Utilisation dans des apps web : c'est ce qui nous intéresse ici !
+
+---
+
+class: middle
+
+# Pourquoi dans votre app Web ?
+
+--
+
+### Résoudre une problématique spécifique de performances
+
+--
+
+### ... Changer de langage ?
+
+---
+
+class: bigger
+
+# Ces langages qui compilent vers wasm
+
+- C/C++ ([Emscripten](http://emscripten.org/), LLVM)
+- .NET ([Blazor](https://github.com/aspnet/blazor))
+- JVM ([TeaVM](https://github.com/konsoletyper/teavm))
+- Go
+- Elixir
+- Kotlin
+- Faust
+
+--
+- [... et tous les autres](https://github.com/appcypher/awesome-wasm-langs)
+
+--
+- Rust !
+
+---
+
+class: middle, center
+
+# Rust
+
+![Rust loves JS](./img/rust_love_js.png)
+
+(Copyright [Lin Clark](https://hacks.mozilla.org/2018/03/making-webassembly-better-for-rust-for-all-languages))
+
+???
+
+- Langage bas-niveau / "système"
+- Mais avec une expressivité haut niveau
+- Très rapide (langage compilé, typé statiquement)
+- Vous empêche de faire des erreurs au moment de la compilation
+- Multithreadé et safe
+
+Initiative de Mozilla, mais utilisation dépasse Moz.
+Dropbox, CoreOS, Coursera, OVH, npm inc, ... et GlimmerVM dans Ember !
 
 ---
 
