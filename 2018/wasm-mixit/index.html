@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Faciliter le développement d'applications web rapides avec WebAssembly</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+
+      @import url(https://fonts.googleapis.com/css?family=Zilla+Slab);
+      @import url(https://fonts.googleapis.com/css?family=Roboto);
+
+      .remark-slide-content {
+          background-color: #0d47a1;
+      }
+
+      .white-bg {
+          background-color: #ffffff;
+      }
+
+      body {
+          font-family: 'Roboto', serif;
+          color: #e8eaf6;
+      }
+
+      h1, h2, h3 {
+          font-family: 'Zilla Slab', sans-serif;
+          font-weight: normal;
+      }
+
+      h1 {
+          color: #f86728;
+      }
+
+      a {
+          text-decoration: none;
+          color: #f86728;
+      }
+
+      blockquote {
+          font-style: italic;
+          font-size: 1.2em;
+      }
+      blockquote strong {
+          color: #f86728;
+      }
+
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.4em;
+      }
+
+      .bigger {
+          font-size: 1.8em;
+      }
+      .bigger img {
+          height: 10em;
+      }
+
+    </style>
+  </head>
+  <body>
+    <textarea id="source" rows="100%" cols="100%">
+
+class: center, middle
+
+# Des applications Web rapides avec WebAssembly
+
+### Ou comment utiliser [votre langage] sur le Web
+
+???
+
+Notes de celui qui parle. Si vous voyez cela, il y a un raté quelque part.
+
+---
+
+background-image: url(./img/firefox.png)
+background-size: 50% auto
+
+# [@bnjbvr](https://twitter.com/bnjbvr)
+
+.left[such [floss](https://framasoft.org)]
+
+.right[very [mozilla](https://mozilla.org)]
+
+.left[so [kresus](https://kresus.org)]
+
+.bigger.right[wow]
+
+
+???
+
+Je suis ingénieur logiciel, travaille pour mozilla, je raconte ma vie,
+blablabla on n'est pas là pour écouter ma biographie.
+
+---
+
+class: middle, center
+
+# Deux gros problèmes du Web ?
+
+![First world problems](./img/firstworldproblem.jpg)
+
+---
+
+# Les performances
+
+<blockquote>
+<p>Loading time is a major factor in page abandonment and loyalty; 53% of users
+report that they abandon sites that take <strong>more than three seconds to
+load</strong> (source: SOASTA Google study report).</p>
+
+<p>Users visit more often, stay longer, search more, and buy more frequently on
+sites that load quickly than on slower ones; one company found that a
+conversion increase of 7% resulted from <strong>a speed improvement of as
+little as .85 seconds</strong> (source: WPO Stats).</p>
+
+<p>Slow loading is detrimental for <strong>search engine optimization
+(SEO)</strong> because it can lower your site's ranking, resulting in fewer
+visits, reads, and conversions; in 2018, Google will implement site speed as a
+ranking signal in its mobile searches (source: Search Engine Land).</p>
+</blockquote>
+
+---
+
+# Le langage imposé
+
+<blockquote class="twitter-tweet" data-conversation="none" data-lang="fr"><p lang="fr" dir="ltr">c&#39;est vraiment ça. On dirait le Javascript. Tout le monde en fait alors qu&#39;on sait que c&#39;est pourri.</p>&mdash; Seboss666 (@Seboss666) <a href="https://twitter.com/Seboss666/status/768819685823508481?ref_src=twsrc%5Etfw">25 août 2016</a></blockquote>
+
+<blockquote class="twitter-tweet" data-conversation="none" data-lang="fr"><p lang="fr" dir="ltr">ah tu veux dire que le javascript c&#39;est nul. en effet.</p>&mdash; Alice Voidstar (@CobaltVelvet) <a href="https://twitter.com/CobaltVelvet/status/832181927377514496?ref_src=twsrc%5Etfw">16 février 2017</a></blockquote>
+
+---
+
+class: center, middle, white-bg
+
+![Logo de wasm](./img/logo.png)
+
+---
+
+class: bigger
+
+# C'est quoi WebAssembly ?
+
+### Un **environnement d'exécution** rapide, stable, bien défini, aux performances proches du natif.
+--
+
+### Un nouveau **standard** créé en coopération par Apple, Google, Microsoft et Mozilla.
+
+--
+### Un format **binaire** compact, portable, rapide à charger et à *compiler*.
+
+--
+### Tout ça intégré dans la plateforme Web.
+
+
+---
+
+class: middle, center
+
+# Merci !
+
+### slides : [bnjbvr.github.io/slides/2018/wasm-mixit](https://bnjbvr.github.io/slides/2018/wasm-mixit)
+### canal IRC : [#wasm](https://kiwiirc.com/client/irc.mozilla.org/#wasm) sur irc.mozilla.org
+### Rust+Wasm : [github.com/rustwasm](https://github.com/rustwasm/)
+### WebAssembly : [webassembly.org](https://webassembly.org/)
+### Infos : [@WasmWeekly](https://twitter.com/WasmWeekly)
+### [@bnjbvr](https://twitter.com/bnjbvr)
+
+---
+
+class: middle, center
+
+# Q&A
+
+???
+
+Commentaires, questions?
+
+    </textarea>
+    <script src="remark.js">
+    </script>
+    <script>
+var slideshow = remark.create({
+    highlightLanguage: "javascript",
+    highlightLines: true,
+    countIncrementalSlides: false
+});
+    </script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </body>
+</html>
