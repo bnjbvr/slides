@@ -7,6 +7,7 @@
 
       @import url(https://fonts.googleapis.com/css?family=Zilla+Slab);
       @import url(https://fonts.googleapis.com/css?family=Roboto);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono);
 
       .remark-slide-content {
           background-color: #0d47a1;
@@ -46,7 +47,7 @@
 
       .remark-code, .remark-inline-code {
           font-family: 'Ubuntu Mono';
-          font-size: 1.4em;
+          font-size: 1.2em;
       }
 
       .bigger {
@@ -174,8 +175,6 @@ bientôt.
 
 ---
 
-class: middle
-
 # C'est efficace ?
 
 --
@@ -196,8 +195,8 @@ class: middle
 
 ???
 
-Démarrage : pas de parsing, pas d'exécution lazy, tiered compilation, streaming
-compilation, mise en cache.
+Démarrage : fichier binaire, pas de parsing, pas d'exécution lazy, tiered
+compilation, streaming compilation, mise en cache.
 
 Exécution : langage statique typé, correspondance directe avec le CPU, pas
 d'allocation mémoire (GC), précompilation par un gros compilateur. On est
@@ -233,7 +232,7 @@ inspecter le code source et le deboguer ! et source maps !
 
 Programmes complets : Unity / Unreal Engine.
 
-Porter des libs : OpenCV, NaCL (crypto), etc.
+Porter des libs : OpenCV, NaCL (crypto), compression, codecs, etc.
 
 Utilisation dans des libs : React pour Fiber, Glimmer VM pour Ember, etc.
 
@@ -293,6 +292,263 @@ class: middle, center
 
 Initiative de Mozilla, mais utilisation dépasse Moz.
 Dropbox, CoreOS, Coursera, OVH, npm inc, ... et GlimmerVM dans Ember !
+
+---
+
+# C++ 🔫 👣
+
+```c++
+struct Obj {
+    int x;
+    Obj(int x) : x(x) {}
+};
+void func(Obj** obj) {
+    Obj tmp(42);
+    *obj = &tmp;
+}
+void main() {
+    Obj* obj;
+    func(&obj);
+    std::cout << obj->x << std::endl;
+}
+```
+
+---
+
+# Rust 😅
+
+```rust
+fn main() {
+    let x: &i32;
+    {
+        let y = 100;
+        x = &y;
+    }
+    println!("Hello, {}", *x);
+}
+```
+
+---
+
+# Sauvé par le compilateur !
+
+```
+error[E0597]: `y` does not live long enough
+ --> src/main.rs:5:14
+  |
+5 |         x = &y;
+  |              ^ borrowed value does not live long enough
+6 |     }
+  |     - `y` dropped here while still borrowed
+7 |     println!("Hello, {}", *x);
+8 | }
+  | - borrowed value needs to live until here
+
+error: aborting due to previous error
+
+For more information about this error, try
+`rustc --explain E0597`.
+```
+
+---
+
+# Installer Rust
+
+### A ne faire qu'une seule fois ⚠️
+
+
+```
+curl https://sh.rustup.rs -sSf | sh
+export PATH=$HOME/.cargo/bin:$PATH
+rustup toolchain install nightly
+rustup target add wasm32-unknown-unknown --toolchain nightly
+```
+
+???
+
+Attention en téléchargeant et streamant dans sh.
+
+---
+
+# Commencer un projet
+
+Initialiser le projet :
+
+```
+cargo +nightly new --lib example
+```
+
+Ajouter dans le fichier `Cargo.toml` :
+
+```
+[lib]
+crate-type = ["cdylib"]
+```
+
+Build vers WebAssembly :
+
+```
+cd example
+cargo +nightly build --target wasm32-unknown-unknown \
+    --release
+```
+
+---
+
+### [Rust](./example/index.html)
+
+```rust
+#[no_mangle]
+pub extern fn add_one(a: u32) -> u32 {
+    a + 1
+}
+```
+
+### JavaScript
+
+```js
+// ⚠️ mimetype application/wasm
+const response = fetch('example.wasm');
+(async function() {
+    let { instance } =
+        await WebAssembly.instantiateStreaming(response);
+    let result = instance.exports.add_one(41);
+    alert(`The answer is ${result}`);
+})();
+```
+
+---
+
+# Problèmes de cette approche
+
+### Etape de *build* pas intégrée
+### Nécessité de toucher aux APIs WebAssembly
+### Interactions plus complexes ?
+### Interopérabilité avec des types plus complexes ?
+
+???
+
+Wasm fournit beaucoup d'abstractions bas niveau (table de fonctions, fonctions,
+bloc de mémoire linéaire), mais ne permet pas d'utiliser des types plus haut
+niveau : chaîne de caractères, booléens, ou types définis par les devs.
+
+Possibilité d'appeler des fonctions JS depuis Wasm et inversement.
+
+---
+
+class: bigger
+
+# [Passer une chaîne de caractères](./example/complex.html)
+
+### De JS à Rust
+
+- transformer cette chaîne dans sa représentation en octets
+- mettre cette représentation en mémoire wasm
+- côté Rust, construire une chaîne depuis cette représentation
+
+--
+
+### De Rust à JS
+
+- la même... en sens inverse !
+
+---
+
+class: center, middle
+
+# Et si des outils faisaient le travail pour nous ?
+
+---
+
+# Build / bundle
+
+Webpack >= 4.0.0 / Parcel >= v1.5.0
+
+```
+npm install -g webpack@4.0.1
+```
+
+Et ensuite :
+
+```
+import * as wasm from './module.wasm';
+```
+
+---
+
+# wasm-bindgen
+
+Pour l'interopérabilité entre les deux mondes.
+
+```
+cargo install wasm-bindgen-cli
+```
+
+Ajouter au Cargo.toml :
+
+```
+[dependencies]
+wasm-bindgen = "0.2"
+```
+
+Des annotations dans le code...
+
+Après le build Rust :
+
+```
+wasm-bindgen \
+  target/wasm32-unknown-unknown/release/project_name.wasm \
+  --out-dir .
+```
+
+???
+
+wasm-bindgen génère du code Rust et du code JS pour interagir plus facilement
+entre les deux mondes.
+
+- le code wasm résultant contient un tout petit allocateur de mémoire pour
+pouvoir passer des paramètres (via la mémoire wasm).
+- et des wrappers Rust pour reconstruire les arguments passés depuis la mémoire
+ou les valeurs retournées vers la mémoire par les fonctions.
+- le code JS contient des wrappers pour simplifier le passage de valeurs dans
+l'autre sens également.
+
+Mais comment les outils (compilateur et wasm-bindgen) savent quel code
+augmenter ?
+
+---
+
+# Annotations wasm-bindgen
+
+```rust
+#![feature(proc_macro, wasm_custom_section, \
+    wasm_import_module)]
+
+extern crate wasm_bindgen;
+
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern {
+    fn alert(msg: &str);
+}
+
+#[wasm_bindgen]
+pub extern fn hello_world(name: &str) {
+    let formatted = format!("Hello, {}", name);
+    alert(&formatted);
+}
+```
+
+---
+
+# Utilisation en JS
+
+```js
+import('./project.js').then(project => {
+    project.hello_world("Benjamin");
+});
+```
 
 ---
 

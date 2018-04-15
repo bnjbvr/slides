@@ -1,0 +1,16 @@
+<button id="click">CLICKCLICK</button>
+<script>
+
+let instance;
+
+const response = fetch('target/wasm32-unknown-unknown/release/example.wasm');
+(async function() {
+    instance = (await WebAssembly.instantiateStreaming(response, {
+        env: { console() {} }
+    })).instance;
+})();
+
+document.querySelector('#click').onclick = () => {
+    alert(`The answer is ${instance.exports.add_one(41)}`);
+};
+</script>

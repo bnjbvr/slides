@@ -1,0 +1,44 @@
+<script>
+const response = fetch('target/wasm32-unknown-unknown/release/example.wasm');
+
+(async function() {
+    let { instance } = await WebAssembly.instantiateStreaming(response, {
+        env: {
+            console(index) {
+                alert(`Console called with index=${index}`);
+                // Reconstruct string from memory.
+                let string = '';
+                let memory = new Uint8Array(exports.memory.buffer);
+                while (memory[MEMORY_START + index] !== 0 && index < 32) {
+                    string += String.fromCharCode(memory[MEMORY_START + index]);
+                    index++;
+                }
+                alert(string);
+            }
+        }
+    });
+
+    let { exports } = instance;
+
+    let name = "Benjamin";
+    for (let i = 0; i < name.length; i++) {
+        exports.fill_mem(i, name.charCodeAt(i));
+    }
+
+    // Hack: scan memory to find where MEMORY is.
+    let MEMORY_START = -1;
+    let memory = new Uint8Array(exports.memory.buffer);
+    for (let i = 0; i < memory.length; i++) {
+        if (memory[i] !== 'B'.charCodeAt(0))
+            continue;
+        if (i+1 >= memory.length || memory[i+1] !== 'e'.charCodeAt(0))
+            continue;
+        MEMORY_START = i;
+        break;
+    }
+
+    // Finally call function.
+    console.log('Memory start is at', MEMORY_START);
+    exports.hello_world(0, 8);
+})();
+</script>
