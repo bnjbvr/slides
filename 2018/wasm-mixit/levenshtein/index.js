@@ -16,16 +16,10 @@ import("./levenshtein.js").then(module => {
         }
     })();
 
-    let lastCall = null;
-    $input.onkeyup = () => {
-        if (lastCall && Date.now() - lastCall < 500) {
-            return;
-        }
-        lastCall = Date.now();
-
+    let cb = () => {
         let input = $input.value;
 
-        let numResp = dict.compare(input);
+        let numResp = dict.compare(input, 1);
         $numAnswers.innerText = `${numResp} answers`;
 
         let markup = '';
@@ -33,5 +27,16 @@ import("./levenshtein.js").then(module => {
             markup += `<li>${dict.next()}</li>`;
         }
         $result.innerHTML = markup;
+    };
+
+    let fire = null;
+    $input.onkeyup = () => {
+        if (fire !== null) {
+            return;
+        }
+        fire = setTimeout(() => {
+            cb();
+            fire = null;
+        }, 100);
     };
 });

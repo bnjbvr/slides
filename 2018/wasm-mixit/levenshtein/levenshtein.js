@@ -88,11 +88,11 @@ wasm.__wbindgen_free(ptr0, len0 * 1);
 
                 }
             }
-compare (arg0) {
+compare (arg0, arg1) {
         const [ptr0, len0] = passStringToWasm(arg0);
                                 setGlobalArgument(len0, 0);
                             try {
-                    const ret = wasm.dict_compare(this.ptr, ptr0);
+                    const ret = wasm.dict_compare(this.ptr, ptr0, arg1);
                     return ret;
                 } finally {
                     

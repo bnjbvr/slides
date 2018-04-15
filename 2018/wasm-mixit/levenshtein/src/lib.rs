@@ -8,7 +8,6 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 pub struct Dict {
     entries: Vec<String>,
-    threshold: usize,
     results: Vec<String>,
     last_read: usize,
 }
@@ -18,7 +17,6 @@ impl Dict {
     pub fn new() -> Dict {
         Dict {
             entries: Vec::new(),
-            threshold: 4,
             results: Vec::new(),
             last_read: 0,
         }
@@ -28,13 +26,13 @@ impl Dict {
         self.entries.push(name.to_string());
     }
 
-    pub fn compare(&mut self, name: &str) -> usize {
+    pub fn compare(&mut self, name: &str, threshold: usize) -> usize {
         self.results = Vec::new();
         self.last_read = 0;
 
         for entry in &self.entries {
             let new_distance = edit_distance::edit_distance(name, &entry);
-            if new_distance < self.threshold {
+            if new_distance <= threshold && name != entry {
                 self.results.push(entry.to_string());
             }
         }
