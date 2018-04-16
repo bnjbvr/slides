@@ -1,6 +1,24 @@
 import leven from 'leven';
 
 let DICTIONARY = [];
+let MODULE;
+let $LOGS;
+let clearLogsFirst = false;
+
+function clearLogs() {
+    $LOGS.innerText = '';
+}
+function log(...rest) {
+    if (clearLogsFirst) {
+        $LOGS.innerText = '';
+        clearLogsFirst = false;
+    }
+    $LOGS.innerText += rest.join(' ') + '\n';
+}
+
+function round2(x) {
+    return (x*100|0)/100 + 'ms';
+}
 
 class JsDict {
     constructor() {
@@ -20,9 +38,6 @@ class JsDict {
             if (input === name) {
                 return 0;
             }
-            if (Math.abs(input.length - name.length) < threshold) {
-                continue;
-            }
             if (leven(input, name) <= threshold) {
                 this.results.push(name);
             }
@@ -41,77 +56,115 @@ function initDict(dict) {
     }
 }
 
-function benchmark(name, dict) {
-    let before = performance.now();
+function benchmarkOne(name, dict) {
     initDict(dict);
-    console.log(name, 'insert:', performance.now() - before);
+
+    const LIMIT = 10;
 
     let result = null;
-    let LIMIT = 1000;
     let i = 0;
-    before = performance.now();
+    let time = 0;
+
     for (let word of DICTIONARY) {
+        // Exact match.
+        let before = performance.now();
         result = dict.compare(word, 1);
+        time += performance.now() - before;
+
+        // One-letter off (positive bias).
+        let otherWord = word + 't';
+        before = performance.now();
+        result = dict.compare(otherWord, 1);
+        time += performance.now() - before;
+
+        // One-letter off (negative bias).
+        otherWord = word.slice(0, word.length - 2);
+        before = performance.now();
+        result = dict.compare(otherWord, 1);
+        time += performance.now() - before;
+
         if (i++ > LIMIT)
             break;
     }
-    console.log(name, 'compare:', performance.now() - before);
+
+    log(name, 'compare:', round2(time));
     return result;
 }
 
-let module;
+function benchmark() {
+    clearLogs();
+
+    benchmarkOne("js", JsDict.new());
+
+    let wasmDict = MODULE.Dict.new();
+    benchmarkOne("wasm", wasmDict);
+    wasmDict.free();
+
+    clearLogsFirst = true;
+}
+
 import("./levenshtein.js").then(m => {
-    module = m;
+    MODULE = m;
     return fetch('dictionary.txt');
 }).then(response => {
     return response.text();
 }).then(asTxt => {
     DICTIONARY = asTxt.split('\n');
 
-    //benchmark('javascript', JsDict.new());
-    //benchmark('wasm', module.Dict.new());
-
     let $ = document.querySelector.bind(document);
     let $input = $('#input');
     let $result = $('#result');
     let $numAnswers = $('#numAnswers');
+    $LOGS = $('#logs');
 
     let prevModeIsJS = true;
     let dict = JsDict.new();
     initDict(dict);
+    log('started using JS');
 
     let $switch = $('#switch');
     $switch.onclick = () => {
         if (prevModeIsJS) {
-            dict = module.Dict.new();
+            log('started using wasm');
+            dict = MODULE.Dict.new();
             $switch.innerText = 'switch to JS';
         } else {
+            log('started using JS');
             dict.free();
             dict = JsDict.new();
             $switch.innerText = 'switch to wasm';
         }
+        prevModeIsJS = !prevModeIsJS;
         initDict(dict);
     }
 
+    $('#benchmark').onclick = benchmark;
+
     let cb = () => {
-        let input = $input.value;
+        let input = $input.value.trim();
+        if (!input.length) {
+            return;
+        }
 
         let before = performance.now();
-        let numResp = dict.compare(input, 1);
-        console.log(numResp, 'time to compare:', performance.now() - before);
+        let numResp = dict.compare(input, 2);
+        log('time to perform comparisons:', round2(performance.now() - before));
         if (!numResp) {
             $numAnswers.innerText = '';
             $result.innerHTML = '';
             return;
         }
 
-        $numAnswers.innerText = `Did you mean one of these ${numResp} word${numResp === 1?'':'s'}`;
-
-        let markup = '';
-        for (let i = 0; i < numResp; i++) {
-            markup += `<li>${dict.next()}</li>`;
+        if (numResp === 1) {
+            $numAnswers.innerText = `Did you mean ${dict.next()}?`;
+        } else {
+            $numAnswers.innerText = `Did you mean one of these ${numResp} word${numResp === 1?'':'s'}?`;
+            let markup = '';
+            for (let i = 0; i < numResp; i++) {
+                markup += `<li>${dict.next()}</li>`;
+            }
+            $result.innerHTML = markup;
         }
-        $result.innerHTML = markup;
     };
 
     let fire = null;

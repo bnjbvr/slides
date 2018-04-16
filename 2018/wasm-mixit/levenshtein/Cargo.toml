@@ -5,7 +5,7 @@ authors = ["Benjamin Bouvier <public@benj.me>"]
 
 [dependencies]
 wasm-bindgen = "0.2"
-edit-distance = "2.0.0"
+strsim = "0.7.0"
 
 [lib]
 crate-type = ["cdylib"]

@@ -1,7 +1,8 @@
 #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
 
 extern crate wasm_bindgen;
-extern crate edit_distance;
+
+extern crate strsim;
 
 use wasm_bindgen::prelude::*;
 
@@ -31,12 +32,9 @@ impl Dict {
         self.last_read = 0;
 
         for entry in &self.entries {
-            let new_distance = edit_distance::edit_distance(name, &entry);
+            let new_distance = strsim::levenshtein(name, &entry);
             if name == entry {
                 return 0;
-            }
-            if (name.len() as isize - entry.len() as isize).abs() < threshold as isize {
-                continue;
             }
             if new_distance <= threshold {
                 self.results.push(entry.to_string());
