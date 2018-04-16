@@ -69,7 +69,7 @@ class: center, middle
 
 # Des applications Web rapides avec WebAssembly
 
-### Ou comment utiliser [votre langage] sur le Web
+### ou comment utiliser [votre langage] sur le Web !
 
 ???
 
@@ -134,9 +134,13 @@ ranking signal in its mobile searches (source: Search Engine Land).</p>
 
 ---
 
-class: center, middle, white-bg
+class: white-bg
+background-image: url(./img/logo.png)
+background-size: auto 90%
 
-![Logo de wasm](./img/logo.png)
+???
+
+Faits pour cohabiter !
 
 ---
 
@@ -154,6 +158,10 @@ class: bigger
 
 --
 ### Tout ça intégré dans la plateforme Web.
+
+???
+
+Draft W3C depuis le 15 fevrier 2018
 
 
 ---
@@ -251,6 +259,14 @@ class: middle
 --
 
 ### ... Changer de langage ?
+
+???
+
+Premature optimization root of all evil.
+
+- Trouver les 20% de code qui prennent 80% du temps, avec un profiler.
+- Optimiser ces 20%.
+- S'il y a un autre problème de performance, reprendre un profiler.
 
 ---
 
@@ -484,7 +500,7 @@ Pour l'interopérabilité entre les deux mondes.
 cargo install wasm-bindgen-cli
 ```
 
-Ajouter au Cargo.toml :
+Ajouter au `Cargo.toml` :
 
 ```
 [dependencies]
@@ -513,6 +529,12 @@ ou les valeurs retournées vers la mémoire par les fonctions.
 - le code JS contient des wrappers pour simplifier le passage de valeurs dans
 l'autre sens également.
 
+Au final :
+- 1 fichier JS qui propose une interface similaire à celle du code Rust
+- 1 fichier wasm qui sera importé par le module JS
+
+Outil générique, destiné à fonctionner avec tous les langages sources.
+
 Mais comment les outils (compilateur et wasm-bindgen) savent quel code
 augmenter ?
 
@@ -530,9 +552,16 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern {
+    // Declare a JavaScript function.
     fn alert(msg: &str);
 }
+```
 
+---
+
+# Déclarer une fonction
+
+```rust
 #[wasm_bindgen]
 pub extern fn hello_world(name: &str) {
     let formatted = format!("Hello, {}", name);
@@ -540,15 +569,78 @@ pub extern fn hello_world(name: &str) {
 }
 ```
 
----
-
-# Utilisation en JS
-
 ```js
 import('./project.js').then(project => {
     project.hello_world("Benjamin");
 });
 ```
+
+---
+
+# Déclarer un type
+
+```rust
+#[wasm_bindgen]
+pub struct HelloFactory {
+    name: String
+}
+#[wasm_bindgen]
+impl HelloFactory {
+    pub fn new(name: String) -> HelloFactory {
+        HelloFactory { name: name }
+    }
+    pub fn say_hello(&self) {
+        alert(&format!("Hello, {}", self.name));
+    }
+}
+```
+
+```js
+import('./project.js').then(project => {
+    let factory = project.HelloFactory.new("Benjamin");
+    factory.say_hello();
+    factory.free();
+});
+```
+
+---
+
+class: middle, center, bigger
+
+# Démo complète : un correcteur de typos
+
+Benjamin, j'espère que t'as pas oublié de lancer `webpack-dev-server`, sinon
+[ce lien](http://localhost:8080) ne va pas marcher.
+
+---
+
+# Et le futur ?
+
+--
+
+### host bindings
+
+--
+
+### garbage collector
+
+--
+
+### shared array buffers
+
+--
+
+Et tout le reste : SIMD, exception handling,...
+
+---
+
+class: center, middle
+
+# En résumé
+
+### plus rapide à charger
+### plus rapide à l'exécution
+### *B.Y.O.L* (Bring Your Own Langage)
 
 ---
 
@@ -562,16 +654,6 @@ class: middle, center
 ### WebAssembly : [webassembly.org](https://webassembly.org/)
 ### Infos : [@WasmWeekly](https://twitter.com/WasmWeekly)
 ### [@bnjbvr](https://twitter.com/bnjbvr)
-
----
-
-class: middle, center
-
-# Q&A
-
-???
-
-Commentaires, questions?
 
     </textarea>
     <script src="remark.js">

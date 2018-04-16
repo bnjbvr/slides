@@ -3,16 +3,11 @@ import leven from 'leven';
 let DICTIONARY = [];
 let MODULE;
 let $LOGS;
-let clearLogsFirst = false;
 
 function clearLogs() {
     $LOGS.innerText = '';
 }
 function log(...rest) {
-    if (clearLogsFirst) {
-        $LOGS.innerText = '';
-        clearLogsFirst = false;
-    }
     $LOGS.innerText += rest.join(' ') + '\n';
 }
 
@@ -99,8 +94,6 @@ function benchmark() {
     let wasmDict = MODULE.Dict.new();
     benchmarkOne("wasm", wasmDict);
     wasmDict.free();
-
-    clearLogsFirst = true;
 }
 
 import("./levenshtein.js").then(m => {
@@ -139,6 +132,7 @@ import("./levenshtein.js").then(m => {
     }
 
     $('#benchmark').onclick = benchmark;
+    $('#clearlogs').onclick = clearLogs;
 
     let cb = () => {
         let input = $input.value.trim();
@@ -157,6 +151,7 @@ import("./levenshtein.js").then(m => {
 
         if (numResp === 1) {
             $numAnswers.innerText = `Did you mean ${dict.next()}?`;
+            $result.innerHTML = '';
         } else {
             $numAnswers.innerText = `Did you mean one of these ${numResp} word${numResp === 1?'':'s'}?`;
             let markup = '';

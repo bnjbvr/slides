@@ -1,9 +1,9 @@
 
-            /* tslint:disable */
-            import * as wasm from './wasmbindgen_bg';
-            
+                /* tslint:disable */
+                import * as wasm from './wasmbindgen_bg';
+                
 
-            
+                
                 const TextDecoder = typeof window === 'object' && window.TextDecoder
                     ? window.TextDecoder
                     : require('util').TextDecoder;
@@ -79,9 +79,31 @@ wasm.__wbindgen_free(ptr0, len0 * 1);
                 }
             }
 
+export class HelloFactory {
+
+                    constructor(ptr) {
+                        this.ptr = ptr;
+                    }
+                
+                free() {
+                    const ptr = this.ptr;
+                    this.ptr = 0;
+                    wasm.__wbg_hellofactory_free(ptr);
+                }
+            static new (arg0) {
+        const [ptr0, len0] = passStringToWasm(arg0);
+                                setGlobalArgument(len0, 0);
+                            const ret = wasm.hellofactory_new(ptr0);
+                return new HelloFactory(ret);
+                            
+            }
+say_hello () {
+        const ret = wasm.hellofactory_say_hello(this.ptr);
+                return ret;
+            }
+}
 export function __wbindgen_throw (ptr, len) {
                         throw new Error(getStringFromWasm(ptr, len));
                     }
 
-            
-        
+                
