@@ -1,9 +1,9 @@
 
-            /* tslint:disable */
-            import * as wasm from './levenshtein_bg';
-            
+                /* tslint:disable */
+                import * as wasm from './levenshtein_bg';
+                
 
-            
+                
                 const TextEncoder = typeof window === 'object' && window.TextEncoder
                     ? window.TextEncoder
                     : require('util').TextEncoder;
@@ -114,5 +114,4 @@ export function __wbindgen_throw (ptr, len) {
                         throw new Error(getStringFromWasm(ptr, len));
                     }
 
-            
-        
+                

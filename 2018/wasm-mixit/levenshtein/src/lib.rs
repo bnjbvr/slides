@@ -32,7 +32,13 @@ impl Dict {
 
         for entry in &self.entries {
             let new_distance = edit_distance::edit_distance(name, &entry);
-            if new_distance <= threshold && name != entry {
+            if name == entry {
+                return 0;
+            }
+            if (name.len() as isize - entry.len() as isize).abs() < threshold as isize {
+                continue;
+            }
+            if new_distance <= threshold {
                 self.results.push(entry.to_string());
             }
         }
