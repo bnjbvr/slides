@@ -1,0 +1,225 @@
+Sep 18 18:13:39.799 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error: expected one of `crate`, `fn`, or `{`, found `struct`
+ --> src/lib.rs:9:8
+  |
+9 | extern struct Console {
+  |        ^^^^^^ expected one of `crate`, `fn`, or `{` here
+
+error: aborting due to previous error
+
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:14:10.447 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error: expected item after attributes
+  --> src/lib.rs:10:39
+   |
+10 | #[wasm_bindgen(js_namespace = console)]
+   |                                       ^
+
+error: aborting due to previous error
+
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:14:21.446 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error: expected item after attributes
+  --> src/lib.rs:10:39
+   |
+10 | #[wasm_bindgen(js_namespace = console)] struct Console {}
+   |                                       ^
+
+error: aborting due to previous error
+
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:15:47.210 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error: expected one of `->`, `where`, or `{`, found `;`
+  --> src/lib.rs:10:23
+   |
+10 | extern fn log(x: &str);
+   |                       ^ expected one of `->`, `where`, or `{` here
+
+error: aborting due to previous error
+
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:16:24.170 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error: expected one of `crate`, `fn`, `pub`, `static`, `type`, or `}`, found `mod`
+  --> src/lib.rs:10:5
+   |
+9  | extern "C" {
+   |             - expected one of `crate`, `fn`, `pub`, `static`, `type`, or `}` here
+10 |     mod console {
+   |     ^^^ unexpected token
+
+error: aborting due to previous error
+
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:16:40.806 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error: expected item after attributes
+  --> src/lib.rs:13:39
+   |
+13 | #[wasm_bindgen(js_namespace = console)]
+   |                                       ^
+
+error: aborting due to previous error
+
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:16:52.396 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error[E0658]: The attribute `wasm_bindgen` is currently unknown to the compiler and may have meaning added to it in the future (see issue #29642)
+  --> src/lib.rs:10:3
+   |
+10 | #[wasm_bindgen]
+   |   ^^^^^^^^^^^^
+   |
+   = help: add #![feature(custom_attribute)] to the crate attributes to enable
+
+error[E0658]: The attribute `wasm_bindgen` is currently unknown to the compiler and may have meaning added to it in the future (see issue #29642)
+  --> src/lib.rs:13:3
+   |
+13 | #[wasm_bindgen(js_namespace = console)]
+   |   ^^^^^^^^^^^^
+   |
+   = help: add #![feature(custom_attribute)] to the crate attributes to enable
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0658`.
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:17:10.532 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error[E0658]: The attribute `wasm_bindgen` is currently unknown to the compiler and may have meaning added to it in the future (see issue #29642)
+  --> src/lib.rs:10:3
+   |
+10 | #[wasm_bindgen]
+   |   ^^^^^^^^^^^^
+   |
+   = help: add #![feature(custom_attribute)] to the crate attributes to enable
+
+error[E0658]: The attribute `wasm_bindgen` is currently unknown to the compiler and may have meaning added to it in the future (see issue #29642)
+  --> src/lib.rs:13:3
+   |
+13 | #[wasm_bindgen(js_namespace = console)]
+   |   ^^^^^^^^^^^^
+   |
+   = help: add #![feature(custom_attribute)] to the crate attributes to enable
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0658`.
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:17:59.287 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error[E0433]: failed to resolve. Use of undeclared type or module `console`
+  --> src/lib.rs:18:5
+   |
+18 |     console::log(s);
+   |     ^^^^^^^ Use of undeclared type or module `console`
+
+error[E0425]: cannot find function `alert` in this scope
+  --> src/lib.rs:20:5
+   |
+20 |     alert(&hello_s);
+   |     ^^^^^ not found in this scope
+
+error: aborting due to 2 previous errors
+
+Some errors occurred: E0425, E0433.
+For more information about an error, try `rustc --explain E0425`.
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:18:03.508 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error[E0433]: failed to resolve. Use of undeclared type or module `console`
+  --> src/lib.rs:18:5
+   |
+18 |     console::log(s);
+   |     ^^^^^^^ Use of undeclared type or module `console`
+
+error[E0425]: cannot find function `alert` in this scope
+  --> src/lib.rs:20:5
+   |
+20 |     alert(&hello_s);
+   |     ^^^^^ not found in this scope
+
+error: aborting due to 2 previous errors
+
+Some errors occurred: E0425, E0433.
+For more information about an error, try `rustc --explain E0425`.
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:24:58.750 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error[E0308]: mismatched types
+  --> src/lib.rs:20:17
+   |
+20 |     console_log(s);
+   |                 ^ expected u32, found &str
+   |
+   = note: expected type `u32`
+              found type `&str`
+
+error: aborting due to previous error
+
+For more information about this error, try `rustc --explain E0308`.
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
+Sep 18 18:25:56.954 ERRO Compilation of your program failed. stderr:
+
+   Compiling example-generate v0.1.0 (/home/ben/code/slides/2018/wasm-jug/example-generate)
+error[E0425]: cannot find function `alert` in this scope
+  --> src/lib.rs:23:5
+   |
+23 |     alert(&hello_s);
+   |     ^^^^^ not found in this scope
+
+error: aborting due to previous error
+
+For more information about this error, try `rustc --explain E0425`.
+error: Could not compile `example-generate`.
+
+To learn more, run the command again with --verbose.
+
