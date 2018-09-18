@@ -29,7 +29,7 @@
 
       a {
           text-decoration: none;
-          color: #f86728;
+          color: #fbab6c;
       }
 
       .white-bg, .white-bg h1 {
@@ -317,7 +317,7 @@ Premature optimization root of all evil.
 
 --
 
-### Profiter d'autres langages...
+### Profiter d'autres langages et de leurs environnements...
 
 ???
 
@@ -327,7 +327,7 @@ Premature optimization root of all evil.
 
 --
 
-### ... tout en profitant des outils Web
+### ... tout en profitant de la plateforme Web
 
 ???
 
@@ -347,15 +347,13 @@ class: bigger
 - Go
 - Elixir
 - Faust
+- JVM (Java, Kotlin, ...)
 
 --
 - [... et tous les autres](https://github.com/appcypher/awesome-wasm-langs)
 
 --
-- Rust !
-
---
-- JVM ! (Java, Kotlin, ...)
+- Rust
 
 ---
 
@@ -402,6 +400,10 @@ int main() {
 }
 ```
 
+???
+
+Que provoque ce code ?
+
 ---
 
 # 👣 🔫
@@ -423,7 +425,7 @@ $ clang++ main.cpp -O3 && ./a.out
 
 ???
 
-- meme pas le bon gout de provoquer un segfault
+Meme pas le bon gout de provoquer un segfault !
 
 ---
 
@@ -471,7 +473,7 @@ struct Data {
     name: String
 }
 
-fn get_name(data: &Data) -> &str {
+fn get_name(data: &'lt Data) -> &'lt str {
     &data.name
 }
 
@@ -506,6 +508,21 @@ fn main() {
     println!("Hello, {}!", b.name);
 }
 ```
+
+???
+
+Les paradigmes de gestion de mémoire dans les langages, c'est :
+- soit une gestion de la mémoire manuelle, via des pointeurs, des mallocs, etc;
+meilleur contrôle, performances plus prédictibles mais plein de
+manières de se tirer des balles dans le pied.
+- soit une gestion de la mémoire automatique, via un GC : plus simple pour des
+débutants (plus dur de faire des bêtises), mais dur de mettre en
+place certains mécanismes (finalizers), performances moins prédictibles
+(pauses), overhead mémoire à cause des méta données du GC.
+
+=> Rust choisit une barrière à l'entrée plus élevée (compréhension du concept
+de lifetime, compilation plus longue), en échange de meilleures performances et
+de nombreuses erreurs de gestion de mémoire qui sont évitées.
 
 ---
 
@@ -552,7 +569,7 @@ cargo +nightly build --target wasm32-unknown-unknown \
 
 ---
 
-### [Simple Rust example](./example/index.html)
+### [Simple Rust example](./example/index.html) - Rust
 
 ```rust
 // A function that's defined in JS.
@@ -570,7 +587,7 @@ pub extern fn add_one(a: u32) -> u32 {
 
 ---
 
-### [Simple Rust example](./example/index.html)
+### [Simple Rust example](./example/index.html) - JS
 
 ```js
 // ⚠️ mimetype application/wasm
@@ -717,6 +734,34 @@ rust.greet("world");
 
 ---
 
+# Déclarer un type
+
+```rust
+#[wasm_bindgen]
+pub struct HelloFactory {
+    name: String
+}
+#[wasm_bindgen]
+impl HelloFactory {
+    pub fn new(name: String) -> HelloFactory {
+        HelloFactory { name: name }
+    }
+    pub fn say_hello(&self) {
+        alert(&format!("Hello, {}", self.name));
+    }
+}
+```
+
+```js
+import('./project.js').then(project => {
+    let factory = project.HelloFactory.new("Benjamin");
+    factory.say_hello();
+    factory.free();
+});
+```
+
+---
+
 class: bigger
 
 # Comment ça marche ?
@@ -761,10 +806,15 @@ class: bigger
 - `wasm-snip`: remplace le code présumé mort du module wasm par un breakpoint
 logiciel.
 
+--
+- ... pas encore *entièrement* intégrés en une étape de *build* unique.
+
 ???
 
 Approche agnostique du langage => une solution possible qui pourrait se
 généraliser.
+
+Ce n'est que le début pour ces outils !
 
 ---
 
@@ -773,6 +823,14 @@ class: middle, center, bigger
 # [Démo complète : un correcteur de typos](./levenshtein/dist/index.html)
 
 \#DeepLearning \#CS301
+
+---
+
+class: middle, center
+
+# [yew](https://github.com/DenisKolodin/yew)
+
+### Framework frontend pour écrire des apps Web en Rust
 
 ???
 
@@ -789,7 +847,7 @@ class: bigger
     - Par exemple, [JSweet](https://github.com/cincheo/jsweet) transpile vers JS.
     - un tel projet par langage source et par langage cible.
 --
-- Compiler le bytecode de la JVM (`class` files) vers wasm
+- Compiler le bytecode de la JVM (`class` files) vers wasm + éventuel runtime
     - Par exemple, [TeaVM](http://teavm.org/), [CheerpJ](https://www.leaningtech.com/cheerpj/).
     - une compilation par projet.
 --
@@ -799,12 +857,11 @@ class: bigger
 
 ???
 
-Support expérimental de wasm dans TeaVM.
+Support expérimental de wasm dans TeaVM. Probable qu'il arrive également dans
+Cheerpj dans le futur.
 
-Probable qu'il arrive également dans Cheerpj dans le futur.
-
-Egalement plein d'autres projets : JWebAssembly, Kotlin Native, Bytecoder,
-GWT...
+Plein d'autres projets pour porter vers le Web : JWebAssembly, Kotlin Native,
+Bytecoder, GWT...
 
 ---
 
@@ -848,6 +905,10 @@ public interface HTMLElement extends Element {
     void setTitle(String title);
 }
 ```
+
+???
+
+Bindings pour le DOM => typage => plus dur de faire des erreurs à l'exécution !
 
 ---
 
@@ -896,11 +957,9 @@ class: center, middle
 
 class: middle, center
 
-# Merci !
+# Expérimentez !
 
-### slides :
-[bnjbvr.github.io/slides/2018/wasm-jug](https://bnjbvr.github.io/slides/2018/wasm-jug)
-### canal IRC : [#wasm](https://kiwiirc.com/client/irc.mozilla.org/#wasm) sur irc.mozilla.org
+### slides : [bnjbvr.github.io/slides/2018/wasm-jug](https://bnjbvr.github.io/slides/2018/wasm-jug)
 ### Rust+Wasm : [github.com/rustwasm](https://github.com/rustwasm/)
 ### WebAssembly : [webassembly.org](https://webassembly.org/)
 ### Infos : [@WasmWeekly](https://twitter.com/WasmWeekly)
