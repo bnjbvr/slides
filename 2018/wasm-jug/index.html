@@ -133,7 +133,7 @@ ranking signal in its mobile searches (source: Search Engine Land).</p>
 
 ---
 
-# Comment écrire du JS performant ?
+# Optimisation des langages dynamiques
 
 ```js
 function f(a) { return a + 42; }
@@ -170,6 +170,10 @@ f({ valueOf() { alert('lol'); return 1; }});
 - inférence de types + hypothèses vérifiées dynamiquement
 - décompilation, compilation, recompilation
 - garbage collector -> pauses à l'exécution
+
+D'où la compilation vers le web : prendre un langage de son choix, et le
+compiler vers du JS à l'aide d'un outil qui fera toutes sortes d'optimisations
+pour nous.
 
 ---
 
@@ -884,31 +888,27 @@ class: bigger
 
 ---
 
-# TeaVM bindings
+# TeaVM wasm example
 
 ```java
-@JSBody(params = { "message" },
-        script = "console.log(message)")
-public static native void log(String message);
+package org.teavm;
 
-// overlay type
-public interface Node extends JSObject {
-    void appendChild(Node newChild);
-    Node cloneNode(boolean deep);
-}
+import org.teavm.interop.Import;
+import org.teavm.interop.Export;
 
-public interface HTMLElement extends Element {
-    @JSProperty
-    String getTitle();
+public class Client {
+    @Import(name="get_rhs")
+    private static native int get_rhs();
 
-    @JSProperty()
-    void setTitle(String title);
+    @Export(name="add")
+    public static int add(int a) {
+        return a + get_rhs();
+    }
+
+    public static void main(String[] args) {
+    }
 }
 ```
-
-???
-
-Bindings pour le DOM => typage => plus dur de faire des erreurs à l'exécution !
 
 ---
 
