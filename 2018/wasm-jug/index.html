@@ -10,7 +10,7 @@
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono);
 
       .remark-slide-content {
-          background-color: #0d47a1;
+          background-color: #2f69c3;
       }
 
       body {
@@ -160,8 +160,10 @@ f("hi there"); // string
 --
 
 ```js
-f({ valueOf() { alert('lol'); return 1; }});
-// integer & side-effects
+f(false); // ???
+f({ }); // ???
+f({ toString() { return "hello, " + "world"; }}); // ???
+f({ valueOf() { alert('lol'); return 1; }}); // ???
 ```
 
 ???
@@ -170,6 +172,18 @@ f({ valueOf() { alert('lol'); return 1; }});
 - inférence de types + hypothèses vérifiées dynamiquement
 - décompilation, compilation, recompilation
 - garbage collector -> pauses à l'exécution
+
+---
+
+class: center, middle
+
+# Compiler vers le Web
+
+### (semi) choix du langage
+
+### code JS généré (supposé) efficace
+
+???
 
 D'où la compilation vers le web : prendre un langage de son choix, et le
 compiler vers du JS à l'aide d'un outil qui fera toutes sortes d'optimisations
@@ -184,7 +198,7 @@ background-image: url(./img/logo.png)
 
 class: bigger
 
-# C'est quoi WebAssembly ?
+# WebAssembly ?
 
 ### Un **environnement d'exécution** stable, bien défini, sécurisé, rapide comme du natif.
 
@@ -195,7 +209,7 @@ class: bigger
 
 --
 
-### Un nouveau **standard** créé en coopération par Apple, Google, Microsoft et Mozilla.
+### Un **standard** créé en coopération par Apple, Google, Microsoft et Mozilla.
 
 ???
 
@@ -206,16 +220,18 @@ WG/CG (réunion tous les mois / deux semaines)
 --
 ### Un format **binaire** compact, portable, rapide à charger et à *compiler*.
 
+???
+
+Bytecode.
+
 --
-### Tout ça intégré dans la plateforme Web.
+### Le tout intégré dans la plateforme Web.
 
 ???
 
 - plus de plugins (cause de crashes, pas besoin de les mettre à jour).
-- facile à distribuer (on évite les app stores sur mobile ou desktop).
-- facile à mettre à jour, à déployer comme on veut, de faire du A/B testing.
-- la sécurité de la plateforme web (Content Security Policy, Subresource
-Integrity, sandboxing...).
+- possibilité d'interagir avec JS dans les deux sens (de JS vers wasm, ou wasm
+vers JS).
 
 ---
 
@@ -229,9 +245,8 @@ class: middle, center, white-bg
 
 ???
 
-A l'heure de l'écriture, représente 71% des navigateurs selon CanIUse.
-
-Attention support dans Safari pour iOS, activé puis désactivé puis réactivé.
+A l'heure de l'écriture, représente 75% des navigateurs selon CanIUse. (71% en
+mai)
 
 Existence d'un polyfill dans un sous ensemble de JS (asm.js) => amélioration
 progressive.
@@ -297,11 +312,12 @@ Utilisation dans des libs : React pour Fiber, Glimmer VM pour Ember, etc.
 
 --
 
-## Pour des [apps web](http://www.adultswim.com/etcetera/elastic-man/)
+## Utilisation dans des [apps web](http://www.adultswim.com/etcetera/elastic-man/)
 
 ???
 
-Utilisation dans des apps web : c'est ce qui nous intéresse ici !
+Faire une app web à partir de rien dans un autre langage que JS, ou porter des
+parties critiques pour la performance.
 
 ---
 
@@ -335,6 +351,10 @@ Premature optimization root of all evil.
 
 ???
 
+- facile à distribuer (on évite les app stores sur mobile ou desktop).
+- facile à mettre à jour, à déployer comme on veut, de faire du A/B testing.
+- la sécurité de la plateforme web (Content Security Policy, Subresource
+Integrity, sandboxing...).
 - intégration avec la plateforme Web
 - source maps : montre le code source du langage utilisé directement dans le
 debugger.
@@ -351,13 +371,14 @@ class: bigger
 - Go
 - Elixir
 - Faust
-- JVM (Java, Kotlin, ...)
+- JVM
+- Kotlin (native)
 
 --
 - [... et tous les autres](https://github.com/appcypher/awesome-wasm-langs)
 
 --
-- Rust
+- Rust !
 
 ---
 
@@ -521,8 +542,8 @@ meilleur contrôle, performances plus prédictibles mais plein de
 manières de se tirer des balles dans le pied.
 - soit une gestion de la mémoire automatique, via un GC : plus simple pour des
 débutants (plus dur de faire des bêtises), mais dur de mettre en
-place certains mécanismes (finalizers), performances moins prédictibles
-(pauses), overhead mémoire à cause des méta données du GC.
+place certains mécanismes de manière déterministe (finalizers), performances
+moins prédictibles (pauses), overhead mémoire à cause des méta données du GC.
 
 => Rust choisit une barrière à l'entrée plus élevée (compréhension du concept
 de lifetime, compilation plus longue), en échange de meilleures performances et
@@ -770,12 +791,9 @@ class: bigger
 
 # Comment ça marche ?
 
-- annotations dans le code langage source
-- traitées et embarquées dans le binaire wasm
-- ces annotations binaires sont traitées par un outil externe `wasm-bindgen`
-- qui génère du code glue JS / wasm pour faciliter le passage d'un univers à
-l'autre
-- les annotations embarquées sont retirées du code binaire wasm
+### annotations langage source compilées
+### `wasm-bindgen` génère des bindings JS
+### annotations retirées du wasm final
 
 ???
 
@@ -800,28 +818,6 @@ encodage/décodage).
 
 ---
 
-class: bigger
-
-# Des outils génériques
-
-- `wasm-gc`: supprime le code mort dans le module wasm.
-- `wasm-bindgen`: facilite la création de bindings entre les langages.
-- `wasm-pack`: gère la compilation, l'utilisation de `bindgen`, la publication sur npm.
-- `wasm-snip`: remplace le code présumé mort du module wasm par un breakpoint
-logiciel.
-
---
-- ... pas encore *entièrement* intégrés en une étape de *build* unique.
-
-???
-
-Approche agnostique du langage => une solution possible qui pourrait se
-généraliser.
-
-Ce n'est que le début pour ces outils !
-
----
-
 class: middle, center, bigger
 
 # [Démo complète : un correcteur de typos](./levenshtein/dist/index.html)
@@ -830,13 +826,32 @@ class: middle, center, bigger
 
 ---
 
-class: middle, center
+class: bigger
 
-# [yew](https://github.com/DenisKolodin/yew)
+# Des outils génériques
 
-### Framework frontend pour écrire des apps Web en Rust
+### wasm-gc
+### wasm-bindgen
+### wasm-pack
+### wasm-snip
+
+--
+### => des bindings génériques (Rust: [js-sys](https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys))
+### => des frameworks web (Rust: [yew](https://github.com/DenisKolodin/yew))
 
 ???
+
+- `wasm-gc`: supprime le code mort dans le module wasm.
+- `wasm-bindgen`: facilite la création de bindings entre les langages.
+- `wasm-pack`: gère la compilation, l'utilisation de `bindgen`, la publication
+sur `npm`.
+- `wasm-snip`: remplace le code présumé mort du module wasm par un breakpoint
+logiciel.
+
+Approche agnostique du langage => une solution possible qui pourrait se
+généraliser.
+
+Ce n'est que le début pour ces outils !
 
 Quid des autres langages ?
 
@@ -844,25 +859,33 @@ Quid des autres langages ?
 
 class: bigger
 
-# La JVM sur le Web : un spectre
+# La JVM sur le Web
 
 --
-- Transpiler depuis le langage source
-    - Par exemple, [JSweet](https://github.com/cincheo/jsweet) transpile vers JS.
-    - un tel projet par langage source et par langage cible.
---
-- Compiler le bytecode de la JVM (`class` files) vers wasm + éventuel runtime
-    - Par exemple, [TeaVM](http://teavm.org/), [CheerpJ](https://www.leaningtech.com/cheerpj/).
-    - une compilation par projet.
---
-- Porter une JVM vers le Web.
-    - Par exemple, [Doppio](https://plasma-umass.org/doppio-demo/).
-    - n'importe quel bytecode JVM, mais plus grande complexité ou performance moindre.
+### Transpiler depuis le langage source ([JSweet](https://github.com/cincheo/jsweet))
 
 ???
 
-Support expérimental de wasm dans TeaVM. Probable qu'il arrive également dans
-Cheerpj dans le futur.
+Transpiler : un tel projet par langage source et par langage cible => explosion
+combinatoire.
+
+--
+### Compiler le bytecode Java + éventuel runtime ([TeaVM](http://teavm.org/), [CheerpJ](https://www.leaningtech.com/cheerpj/))
+
+???
+
+Bytecode : une compilation par projet (rebuilds, re-integrations, etc.)
+plus rapide, plus spécifique
+
+--
+### Porter une JVM vers le Web ([Doppio](https://plasma-umass.org/doppio-demo/))
+
+???
+
+Portage JVM : n'importe quel bytecode JVM, mais plus grande complexité ou
+performance moindre (nécessité d'optimisations dynamiques aka JIT).
+
+Support expérimental de wasm dans TeaVM.
 
 Plein d'autres projets pour porter vers le Web : JWebAssembly, Kotlin Native,
 Bytecoder, GWT...
@@ -881,10 +904,10 @@ class: bigger
 - des extensions pour interagir avec JS.
 
 --
-- [Flavour](http://teavm.org/docs/flavour/templates.html): Framework frontend complet... utilisable en Java !
+- des [source maps](http://teavm.org/live-examples/todomvc) pour le debugging.
 
 --
-- des [source maps](http://teavm.org/live-examples/todomvc) pour le debugging.
+- [Flavour](http://teavm.org/docs/flavour/templates.html): Framework frontend complet... utilisable en Java !
 
 ---
 
@@ -952,6 +975,10 @@ class: center, middle
 --
 
 ### *B.Y.O.L* (Bring Your Own Langage)
+
+--
+
+### Créer des sites Web avec votre langage
 
 ---
 
