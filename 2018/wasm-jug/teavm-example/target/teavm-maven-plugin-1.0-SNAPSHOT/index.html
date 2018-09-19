@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Main page</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <script type="text/javascript" charset="utf-8" src="teavm/classes.wasm-runtime.js"></script>
+  </head>
+  <script>
+    function compileAndRun() {
+        return new Promise((ok, fail) => {
+            let options = {
+                callback: ok,
+                errorCallback: fail,
+                installImports: obj => {
+                    obj[''] = obj[''] || {};
+                    obj['']['get_rhs'] = () =>
+                        Number.parseFloat(document.getElementById('rhs').value);
+                }
+            };
+            TeaVM.wasm.run('teavm/classes.wasm', options);
+        });
+    }
+
+    let sInstance = null;
+
+    async function main() {
+        try {
+            let { module, instance } = await compileAndRun();
+
+            sInstance = instance;
+
+            let output = "<li>" + WebAssembly.Module.exports(module)
+                .filter(o => o.kind === 'function')
+                .map(o => o.name)
+                .join('</li><li>') + "</li>";
+            document.getElementById('output').innerHTML = output;
+        } catch (err) {
+            alert(err);
+        }
+    }
+
+    function runAdd() {
+        let lhs = Number.parseFloat(document.getElementById('lhs').value);
+        let result = sInstance.exports.add_java(lhs);
+        alert(`Result = ${result}`);
+    }
+  </script>
+  <body onload="main()">
+      <ul id="output"></ul>
+
+      <div>
+          <input type=number id="lhs" />
+          <input type=number id="rhs" />
+          <input type=button id="button" onclick="runAdd()" value="add" />
+      </div>
+  </body>
+</html>
