@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Faciliter le développement d'applications web rapides avec WebAssembly</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(https://fonts.googleapis.com/css?family=Zilla+Slab);
+      @import url(https://fonts.googleapis.com/css?family=Roboto);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono);
+
+      :root {
+          --background-color: #052dbd;
+          --font-color: #2cfa80;
+      }
+
+      .remark-slide-content {
+          background-color: var(--background-color);
+      }
+
+      body {
+          font-family: 'Roboto', serif;
+          color: var(--font-color);
+      }
+
+      h1, h2, h3 {
+          font-family: 'Zilla Slab', sans-serif;
+          font-weight: normal;
+      }
+
+      h1 {
+          color: var(--font-color);
+      }
+
+      a {
+          text-decoration: none;
+          color: #c4f98a;
+      }
+
+      .white-bg, .white-bg h1 {
+          background-color: white;
+          color: black;
+      }
+
+      blockquote {
+          font-style: italic;
+          font-size: 1.2em;
+      }
+      blockquote strong {
+          color: var(--font-color);
+      }
+
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.2em;
+      }
+
+      .bigger {
+          font-size: 1.8em;
+      }
+      .bigger img {
+          height: 10em;
+      }
+      .bigger .remark-slide-number {
+          font-size: 20px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <textarea id="source" rows="100%" cols="100%">
+
+class: center, middle
+
+# Des applications Web rapides avec WebAssembly
+
+### ou comment utiliser [votre langage] sur le Web !
+
+???
+
+Notes de celui qui parle. Si vous voyez cela, il y a un raté quelque part.
+
+---
+
+background-image: url(./img/firefox.png)
+background-size: 50% auto
+
+# [@bnjbvr](https://twitter.com/bnjbvr)
+
+.left[such [floss](https://framasoft.org)]
+
+.right[very [mozilla](https://mozilla.org)]
+
+.left[so [kresus](https://kresus.org)]
+
+.bigger.right[wow]
+
+???
+
+Je suis ingénieur logiciel, travaille pour mozilla sur la VM commune à JS et à
+WebAssembly, etc.
+
+---
+
+class: middle, center
+
+# Deux gros problèmes du Web ?
+
+![First world problems](./img/firstworldproblem.jpg)
+
+---
+
+# Les performances
+
+<blockquote>
+<p>Loading time is a major factor in page abandonment and loyalty; 53% of users
+report that they abandon sites that take <strong>more than three seconds to
+load</strong> (source: SOASTA Google study report).</p>
+
+<p>Users visit more often, stay longer, search more, and buy more frequently on
+sites that load quickly than on slower ones; one company found that a
+conversion increase of 7% resulted from <strong>a speed improvement of as
+little as .85 seconds</strong> (source: WPO Stats).</p>
+
+<p>Slow loading is detrimental for <strong>search engine optimization
+(SEO)</strong> because it can lower your site's ranking, resulting in fewer
+visits, reads, and conversions; in 2018, Google will implement site speed as a
+ranking signal in its mobile searches (source: Search Engine Land).</p>
+</blockquote>
+
+---
+
+# Le langage imposé
+
+<blockquote class="twitter-tweet" data-conversation="none" data-lang="fr"><p lang="fr" dir="ltr">c&#39;est vraiment ça. On dirait le Javascript. Tout le monde en fait alors qu&#39;on sait que c&#39;est pourri.</p>&mdash; Seboss666 (@Seboss666) <a href="https://twitter.com/Seboss666/status/768819685823508481?ref_src=twsrc%5Etfw">25 août 2016</a></blockquote>
+
+<blockquote class="twitter-tweet" data-conversation="none" data-lang="fr"><p lang="fr" dir="ltr">ah tu veux dire que le javascript c&#39;est nul. en effet.</p>&mdash; Alice Voidstar (@CobaltVelvet) <a href="https://twitter.com/CobaltVelvet/status/832181927377514496?ref_src=twsrc%5Etfw">16 février 2017</a></blockquote>
+
+---
+
+# Optimisation des langages dynamiques
+
+```js
+function f(a) { return a + 42; }
+```
+
+--
+
+```js
+f(1); // integer
+```
+
+--
+
+```js
+f(13.37); // floating-point
+```
+
+--
+
+```js
+f("hi there"); // string
+```
+
+--
+
+```js
+f(false); // ???
+f({ }); // ???
+f({ toString() { return "hello, " + "world"; }}); // ???
+f({ valueOf() { alert('lol'); return 1; }}); // ???
+```
+
+???
+
+- langage dynamique => rend les optimisations plus difficiles
+- inférence de types + hypothèses vérifiées dynamiquement
+- décompilation, compilation, recompilation
+- garbage collector -> pauses à l'exécution
+
+---
+
+class: center, middle
+
+# Compiler vers le Web
+
+### (semi) choix du langage
+
+### code JS généré (supposé) efficace
+
+???
+
+D'où la compilation vers le web : prendre un langage de son choix, et le
+compiler vers du JS à l'aide d'un outil qui fera toutes sortes d'optimisations
+pour nous.
+
+---
+
+class: white-bg
+background-image: url(./img/logo.png)
+
+---
+
+class: bigger
+
+# WebAssembly ?
+
+### Un **environnement d'exécution** stable, bien défini, sécurisé, rapide comme du natif.
+
+???
+
+- stable = par plateforme, architecture, etc.
+- bien défini = le moins de comportements indéfinis possibles
+
+--
+
+### Un **standard** créé en coopération par Apple, Google, Microsoft et Mozilla.
+
+???
+
+Draft W3C depuis le 15 fevrier 2018
+
+WG/CG (réunion tous les mois / deux semaines)
+
+--
+### Un format **binaire** compact, portable, rapide à charger et à *compiler*.
+
+???
+
+Bytecode.
+
+--
+### Le tout intégré dans la plateforme Web.
+
+???
+
+- plus de plugins (cause de crashes, pas besoin de les mettre à jour).
+- possibilité d'interagir avec JS dans les deux sens (de JS vers wasm, ou wasm
+vers JS).
+
+---
+
+class: middle, center, white-bg
+
+# Support des navigateurs
+
+![Dans tous les navigateurs](./img/browsers.png)
+
+???
+
+A l'heure de l'écriture, représente 75% des navigateurs selon CanIUse. (71% en
+mai)
+
+Existence d'un polyfill dans un sous ensemble de JS (asm.js) => amélioration
+progressive.
+
+---
+
+# C'est efficace ?
+
+--
+
+## plus rapide à démarrer
+## plus rapide à s'exécuter
+## plus compact
+
+???
+
+Démarrage : fichier binaire, pas de parsing, pas d'exécution lazy, tiered
+compilation, streaming compilation, mise en cache.
+
+Exécution : langage statique typé, correspondance directe avec le CPU, pas
+d'allocation mémoire (GC), précompilation par un gros compilateur. On est
+seulement à un petit écart de 20% des performances natives, et ça n'arrête pas
+d'évoluer !
+
+Compact : binaire, moins à télécharger, moins de représentations internes en
+mémoire, moins à stocker en mémoire, économie en bande-passante donc coûts
+serveurs.
+
+--
+
+## debuggable
+
+???
+
+Debugable : format binaire, mais représentation textuelle pour pouvoir
+inspecter le code source et le deboguer ! et source maps !
+
+---
+
+# Cas d'utilisation
+
+## Porter des [programmes complets](https://www.youtube.com/watch?v=TwuIRcpeUWE)
+
+???
+
+Programmes complets : Unity / Unreal Engine.
+
+--
+
+## Porter des [libs](https://websightjs.com/index-video.html)
+
+???
+
+Porter des libs : OpenCV, NaCL (crypto), compression, codecs, etc.
+
+--
+
+## Utilisation dans des [libs](https://www.youtube.com/watch?v=qfnkDyHVJzs&feature=youtu.be&t=5880)
+
+???
+
+Utilisation dans des libs : React pour Fiber, Glimmer VM pour Ember, etc.
+
+--
+
+## Utilisation dans des [apps web](http://www.adultswim.com/etcetera/elastic-man/)
+
+???
+
+Faire une app web à partir de rien dans un autre langage que JS, ou porter des
+parties critiques pour la performance.
+
+---
+
+# Pourquoi dans une app Web ?
+
+--
+
+### Résoudre une problématique spécifique de performances
+
+???
+
+Premature optimization root of all evil.
+
+- Trouver les 20% de code qui prennent 80% du temps, avec un profiler.
+- Optimiser ces 20%.
+- S'il y a un autre problème de performance, reprendre un profiler.
+
+--
+
+### Profiter d'autres langages et de leurs environnements...
+
+???
+
+- plus simple que d'apprendre un nouveau langage, transfert de connaissances
+- paradigmes différents de ceux dans JS
+- possibilité de profiter du tooling (IDEs, etc.)
+
+--
+
+### ... tout en profitant de la plateforme Web
+
+???
+
+- facile à distribuer (on évite les app stores sur mobile ou desktop).
+- facile à mettre à jour, à déployer comme on veut, de faire du A/B testing.
+- la sécurité de la plateforme web (Content Security Policy, Subresource
+Integrity, sandboxing...).
+- intégration avec la plateforme Web
+- source maps : montre le code source du langage utilisé directement dans le
+debugger.
+- profiler
+
+---
+
+class: bigger
+
+# Ces langages qui compilent vers wasm
+
+- C/C++ ([Emscripten](http://emscripten.org/), LLVM, CheerP)
+- .NET ([Blazor](https://github.com/aspnet/blazor))
+- Go
+- Elixir
+- Faust
+- JVM
+- Kotlin (native)
+
+--
+- [... et tous les autres](https://github.com/appcypher/awesome-wasm-langs)
+
+--
+- Rust !
+
+---
+
+class: middle, center
+
+# Rust
+
+![Rust loves JS](./img/rust_love_js.png)
+
+(Copyright [Lin Clark](https://hacks.mozilla.org/2018/03/making-webassembly-better-for-rust-for-all-languages))
+
+???
+
+- Langage bas-niveau / "système"
+- Mais avec une expressivité haut niveau
+- Très rapide (langage compilé, typé statiquement)
+- Vous empêche de faire des erreurs au moment de la compilation
+- Multithreadé et safe: "fearless concurrency"
+
+Initiative de Mozilla, mais utilisation dépasse Moz.
+Dropbox, CoreOS, Coursera, OVH, npm inc, ... et GlimmerVM dans Ember !
+
+Exemple de langage bien supporté pour être compilé vers du WebAssembly, les
+mêmes concepts peuvent s'appliquer à tous les langages !
+
+---
+
+# C++ 👣 🔫
+
+```c++
+#include <iostream>
+struct Obj {
+    int x;
+    Obj(int x) : x(x) {}
+};
+void func(Obj** obj) {
+    Obj tmp(42);
+    *obj = &tmp;
+}
+int main() {
+    Obj* obj;
+    func(&obj);
+    std::cout << obj->x << std::endl;
+}
+```
+
+???
+
+Que provoque ce code ?
+
+---
+
+# 👣 🔫
+
+```bash
+$ g++ main.cpp && ./a.out
+> 42
+```
+
+```bash
+$ g++ main.cpp -O3 && ./a.out
+> 0
+```
+
+```bash
+$ clang++ main.cpp -O3 && ./a.out
+> -1651023112
+```
+
+???
+
+Meme pas le bon gout de provoquer un segfault !
+
+---
+
+# Rust 😅
+
+```rust
+fn main() {
+    let x: &i32;
+    {
+        let y = 100;
+        x = &y;
+    }
+    println!("Hello, {}", *x);
+}
+```
+
+---
+
+# Sauvé par le compilateur !
+
+```
+error[E0597]: `y` does not live long enough
+ --> src/main.rs:5:14
+  |
+5 |         x = &y;
+  |              ^ borrowed value does not live long enough
+6 |     }
+  |     - `y` dropped here while still borrowed
+7 |     println!("Hello, {}", *x);
+8 | }
+  | - borrowed value needs to live until here
+
+error: aborting due to previous error
+
+For more information about this error, try
+`rustc --explain E0597`.
+```
+
+---
+
+# Installer Rust
+
+### A ne faire qu'une seule fois ⚠️
+
+
+```
+curl https://sh.rustup.rs -sSf | sh
+export PATH=$HOME/.cargo/bin:$PATH
+rustup toolchain install nightly
+rustup target add wasm32-unknown-unknown --toolchain nightly
+```
+
+???
+
+Attention en téléchargeant et streamant dans sh !
+
+---
+
+# Commencer un projet
+
+Initialiser le projet :
+
+```
+cargo +nightly new --lib example
+```
+
+Ajouter dans le fichier `Cargo.toml` :
+
+```
+[lib]
+crate-type = ["cdylib"]
+```
+
+Build vers WebAssembly :
+
+```
+cd example
+cargo +nightly build --target wasm32-unknown-unknown \
+    --release
+```
+
+---
+
+### [Simple Rust example](./example/index.html) - Rust
+
+```rust
+// A function that's defined in JS.
+extern {
+    fn console_log(x: u32);
+}
+
+// A function that's exported to JS.
+#[no_mangle]
+pub extern fn add_one(a: u32) -> u32 {
+    unsafe { console_log(a) };
+    a + 1
+}
+```
+
+---
+
+### [Simple Rust example](./example/index.html) - JS
+
+```js
+// ⚠️ mimetype application/wasm
+const response = fetch('example.wasm');
+(async function() {
+    let { instance } = (
+        await WebAssembly.instantiateStreaming(response, {
+            env: {
+                // Define the imported JS function.
+                console_log(x) {
+                    console.log(x);
+                }
+            }
+        })
+    );
+    alert(instance.add_one(41)); // 42
+})();
+```
+
+---
+
+# Problèmes de cette approche
+
+### Etape de *build* pas intégrée
+### Nécessité de toucher aux APIs WebAssembly
+### Interactions avec des APIs du Web depuis le langage source ?
+### Interopérabilité avec des types plus complexes (source ou Web) ?
+
+???
+
+Wasm fournit beaucoup d'abstractions bas niveau (table de fonctions, fonctions,
+bloc de mémoire linéaire), mais ne permet pas d'utiliser des types plus haut
+niveau : chaîne de caractères, booléens, ou types définis par les devs.
+
+Possibilité d'appeler des fonctions JS depuis Wasm et inversement.
+
+Nécessité de rajouter plein de déclarations pour pouvoir utiliser des APIs Web
+depuis le langage source, pour partager des types entre les deux langages, etc.
+
+---
+
+class: bigger
+
+# Exemple : chaînes de caractères
+
+### De JS à Rust
+
+- transformer cette chaîne dans sa représentation mémoire *en Rust*
+- mettre cette représentation en mémoire wasm
+- côté Rust, construire une chaîne depuis cette représentation
+
+--
+
+### De Rust à JS
+
+Les mêmes étapes... en sens inverse !
+
+???
+
+- pas facile pour commencer à développer
+
+Des problèmes inhérents à tous les langages
+
+- surcout memoire : la chaine est représentée plusieurs fois.
+- surcout temps : encodage / décodage de la chaîne.
+- augmente l'activité du GC côté JS.
+
+---
+
+class: center, middle
+
+# Et si des outils faisaient le travail pour nous ?
+
+---
+
+# Créer des projets
+
+```bash
+# wasm-pack to simplify build process
+cargo install wasm-pack
+# cargo-generate for project templates
+cargo install cargo-generate
+# template for Web counterpart
+npm install -g create-wasm-app
+```
+
+```bash
+# Initialize Rust project from a rust-wasm template
+cargo generate \
+    --git https://github.com/rustwasm/wasm-pack-template
+cd example-project
+wasm-pack build # installs deps + initial build
+# Initialize web frontend from a wasm template
+npm init wasm-app www
+(cd www && npm install)
+```
+
+---
+
+# Build & bundle
+
+Recompiler :
+
+```bash
+wasm-pack build
+```
+
+Déployer le front en temps réel avec `webpack-dev-server` (dans `www`) :
+
+```bash
+cd www && npm start
+```
+
+---
+
+# [A simple example](./example-generate/www/dist)
+
+```rust
+extern crate wasm_bindgen;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern "C" {
+    fn alert(s: &str);
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn console_log(x: u32);
+}
+
+#[wasm_bindgen]
+pub fn greet(s: &str) {
+    console_log(42);
+    alert(&format!("Hello, {}!", s));
+}
+```
+
+```js
+import * as rust from "../pkg/example-project"; // js file
+rust.greet("world");
+```
+
+---
+
+# Déclarer un type
+
+```rust
+#[wasm_bindgen]
+pub struct HelloFactory {
+    name: String
+}
+#[wasm_bindgen]
+impl HelloFactory {
+    pub fn new(name: String) -> HelloFactory {
+        HelloFactory { name: name }
+    }
+    pub fn say_hello(&self) {
+        alert(&format!("Hello, {}", self.name));
+    }
+}
+```
+
+```js
+import('./project.js').then(project => {
+    let factory = project.HelloFactory.new("Benjamin");
+    factory.say_hello();
+    factory.free();
+});
+```
+
+---
+
+class: bigger
+
+# Comment ça marche ?
+
+### attribut `#[wasm_bindgen]` génère du code Rust et une *user section* wasm
+### `wasm-bindgen` génère des bindings JS en lisant la *user section*
+### la *user section* est retirée du wasm final
+
+???
+
+wasm-bindgen génère du code Rust et du code JS pour interagir plus facilement
+entre les deux mondes.
+
+- le code wasm résultant contient un tout petit allocateur de mémoire pour
+pouvoir passer des paramètres (via la mémoire wasm).
+- et des wrappers Rust pour reconstruire les arguments passés depuis la mémoire
+ou les valeurs retournées vers la mémoire par les fonctions.
+- le code JS contient des wrappers pour simplifier le passage de valeurs dans
+l'autre sens également.
+
+Au final :
+- 1 fichier JS qui propose une interface similaire à celle du code Rust
+- 1 fichier wasm qui sera importé par le module JS
+
+Remarque : tout ce qui devait être fait à la main est bel et bien effectué par
+les wrappers ; il y a donc un coût supplémentaire pour passer la barrière de la
+FFI (dans notre exemple, mémoire : duplication des chaînes ; CPU :
+encodage/décodage).
+
+---
+
+class: middle, center, bigger
+
+# [Démo complète : un correcteur de typos](./levenshtein/dist/index.html)
+
+\#DeepLearning \#CS301
+
+---
+
+class: bigger
+
+# Des outils génériques
+
+### wasm-gc
+### wasm-bindgen
+### wasm-pack
+### wasm-snip
+
+--
+### => des bindings génériques (Rust: [js-sys](https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys))
+### => des frameworks web (Rust: [yew](https://github.com/DenisKolodin/yew))
+
+???
+
+- `wasm-gc`: supprime le code mort dans le module wasm.
+- `wasm-bindgen`: facilite la création de bindings entre les langages.
+- `wasm-pack`: gère la compilation, l'utilisation de `bindgen`, la publication
+sur `npm`.
+- `wasm-snip`: remplace le code présumé mort du module wasm par un breakpoint
+logiciel.
+
+Approche agnostique du langage => une solution possible qui pourrait se
+généraliser.
+
+Ce n'est que le début pour ces outils !
+
+Quid des autres langages ?
+
+---
+
+class: bigger
+
+# Exemple : la JVM & [TeaVM](http://teavm.org/)
+
+### Compiler le bytecode Java + runtime
+
+???
+
+Plein d'autres manières de faire :
+- transpiler depuis Java,
+- CheerpJ, autre exemple qui compile directement le bytecode,
+- portage JVM (e.g. Doppio) : n'importe quel bytecode JVM, mais plus grande complexité ou
+performance moindre (nécessité d'optimisations dynamiques aka JIT).
+
+Support expérimental de wasm dans TeaVM.
+
+Plein d'autres projets pour porter vers le Web : JWebAssembly, Kotlin Native,
+Bytecoder, GWT...
+
+--
+### sous-ensemble de fonctionnalités
+
+???
+
+Pas de GC, pas de réflectivité (runtime type information), d'autres
+limitations.
+
+--
+### des annotations Java pour importer et exporter
+
+--
+### un framework Java pour interagir avec le Web : [Flavour](http://teavm.org/docs/flavour/templates.html)
+
+---
+
+# TeaVM wasm
+
+```java
+package org.teavm;
+
+import org.teavm.interop.Import;
+import org.teavm.interop.Export;
+
+public class Client {
+    @Import(name="get_rhs")
+    private static native int get_rhs();
+
+    @Export(name="add")
+    public static int add(int a) {
+        return a + get_rhs();
+    }
+
+    public static void main(String[] args) {
+    }
+}
+```
+
+---
+
+# Et le futur ?
+
+--
+
+### garbage collector
+
+--
+
+### host bindings
+
+--
+
+### threads
+
+--
+
+### exception handling
+
+--
+
+### SIMD
+
+---
+
+class: center, middle
+
+# En résumé
+
+### plus rapide à charger
+### plus rapide à l'exécution
+
+--
+
+### *B.Y.O.L* (Bring Your Own Langage)
+
+--
+
+### Créer des sites Web avec votre langage
+
+---
+
+class: middle, center
+
+# Expérimentez !
+
+### slides : [bnjbvr.github.io/slides/2018/wasm-paris](https://bnjbvr.github.io/slides/2018/wasm-paris)
+### Rust+Wasm : [github.com/rustwasm](https://github.com/rustwasm/)
+### WebAssembly : [webassembly.org](https://webassembly.org/)
+### Infos : [@WasmWeekly](https://twitter.com/WasmWeekly)
+### [@bnjbvr](https://twitter.com/bnjbvr)
+
+    </textarea>
+    <script src="remark.js">
+    </script>
+    <script>
+var slideshow = remark.create({
+    highlightLanguage: "javascript",
+    highlightLines: true,
+    countIncrementalSlides: false
+});
+    </script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </body>
+</html>

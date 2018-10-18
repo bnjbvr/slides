@@ -1,0 +1,16 @@
+{
+  "name": "example-generate",
+  "collaborators": [
+    "Benjamin Bouvier <public@benj.me>"
+  ],
+  "description": null,
+  "version": "0.1.0",
+  "license": null,
+  "repository": null,
+  "files": [
+    "example_generate_bg.wasm",
+    "example_generate.d.ts"
+  ],
+  "main": "example_generate.js",
+  "types": "example_generate.d.ts"
+}
