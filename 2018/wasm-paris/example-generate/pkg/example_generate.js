@@ -1,7 +1,7 @@
 /* tslint:disable */
 import * as wasm from './example_generate_bg';
 
-let cachedDecoder = new TextDecoder('utf-8');
+let cachedTextDecoder = new TextDecoder('utf-8');
 
 let cachegetUint8Memory = null;
 function getUint8Memory() {
@@ -12,7 +12,7 @@ function getUint8Memory() {
 }
 
 function getStringFromWasm(ptr, len) {
-    return cachedDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));
+    return cachedTextDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));
 }
 
 export function __wbg_alert_23462ca7787c3d46(arg0, arg1) {
@@ -26,11 +26,11 @@ export function __wbg_log_da9afe694a124269(arg0) {
     __wbg_log_da9afe694a124269_target(arg0);
 }
 
-let cachedEncoder = new TextEncoder('utf-8');
+let cachedTextEncoder = new TextEncoder('utf-8');
 
 function passStringToWasm(arg) {
-    
-    const buf = cachedEncoder.encode(arg);
+
+    const buf = cachedTextEncoder.encode(arg);
     const ptr = wasm.__wbindgen_malloc(buf.length);
     getUint8Memory().set(buf, ptr);
     return [ptr, buf.length];
@@ -43,12 +43,12 @@ export function greet(arg0) {
     const [ptr0, len0] = passStringToWasm(arg0);
     try {
         return wasm.greet(ptr0, len0);
-        
+
     } finally {
         wasm.__wbindgen_free(ptr0, len0 * 1);
-        
+
     }
-    
+
 }
 
 export function __wbindgen_throw(ptr, len) {
