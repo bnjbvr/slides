@@ -73,7 +73,7 @@ class: center, middle
 
 # Comment compiler vers le Web
 
-### par l'exemple de Rust
+### à travers l'exemple de Rust
 
 ???
 
@@ -123,7 +123,7 @@ class: bigger
 
 ### Pour des apps web
 
-- Générer des correspondances pour les APIs du Web
+- Générer des *bindings* pour les APIs du Web
 - Créer des frameworks Web basés sur le langage
 
 ???
@@ -507,9 +507,13 @@ class: bigger
 
 # Comment ça marche ?
 
-### attribut `#[wasm_bindgen]` génère du code Rust et une *user section* wasm
-### `wasm-bindgen` génère des bindings JS en lisant la *user section*
-### la *user section* est retirée du wasm final
+### l'attribut `#[wasm_bindgen]` génère du code Rust :
+
+1. pour simplifier le passage de types
+2. pour décrire les types des bindings
+
+### l'outil `wasm-bindgen` génère des bindings JS en exécutant le code qui décrit les bindings
+### ce code est retiré du binaire final
 
 ???
 
@@ -531,6 +535,10 @@ Remarque : tout ce qui devait être fait à la main est bel et bien effectué pa
 les wrappers ; il y a donc un coût supplémentaire pour passer la barrière de la
 FFI (dans notre exemple, mémoire : duplication des chaînes ; CPU :
 encodage/décodage).
+
+Autre remarque : cela pourrait être effectué par un plugin de compilateur
+également, mais cette approche ne nécessite pas de changement au compilateur
+pour générer les bindings.
 
 ---
 
@@ -678,11 +686,11 @@ class: bigger
 
 - plus rapide à charger
 - plus rapide à l'exécution
-- plus simple à développer
+- développement plus intégré
 
 ### Les étapes !
 
-- supporter le langage
+- compiler le langage vers wasm
 - pouvoir générer des bindings
 - générer des bindings Web
 - écrire des frameworks
