@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pourquoi utiliser WebAssembly dés aujourd'hui</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(https://fonts.googleapis.com/css?family=Zilla+Slab);
+      @import url(https://fonts.googleapis.com/css?family=Roboto);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono);
+
+      :root {
+          --background-color: #052dbd;
+          --font-color: #2cfa80;
+      }
+
+      .remark-slide-content {
+          background-color: var(--background-color);
+      }
+
+      body {
+          font-family: 'Roboto', serif;
+          color: var(--font-color);
+      }
+
+      h1, h2, h3 {
+          font-family: 'Zilla Slab', sans-serif;
+          font-weight: normal;
+      }
+
+      h1 {
+          color: var(--font-color);
+      }
+
+      a {
+          text-decoration: none;
+          color: #c4f98a;
+      }
+
+      .white-bg, .white-bg h1 {
+          background-color: white;
+          color: black;
+      }
+
+      blockquote {
+          font-style: italic;
+          font-size: 1.2em;
+      }
+      blockquote strong {
+          color: var(--font-color);
+      }
+
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.2em;
+      }
+
+      .bigger {
+          font-size: 1.8em;
+      }
+      .bigger img {
+          height: 10em;
+      }
+      .bigger .remark-slide-number {
+          font-size: 20px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <textarea id="source" rows="100%" cols="100%">
+class: center, middle
+
+# Pourquoi utiliser WebAssembly dés aujourd'hui ?
+
+???
+
+Notes de celui qui parle. Si vous voyez cela, il y a un raté quelque part.
+---
+class: middle, center
+
+# Deux gros problèmes du Web ?
+
+![First world problems](./img/firstworldproblem.jpg)
+
+---
+
+# Les performances
+
+<blockquote>
+<p>Loading time is a major factor in page abandonment and loyalty; 53% of users
+report that they abandon sites that take <strong>more than three seconds to
+load</strong> (source: SOASTA Google study report).</p>
+
+<p>Users visit more often, stay longer, search more, and buy more frequently on
+sites that load quickly than on slower ones; one company found that a
+conversion increase of 7% resulted from <strong>a speed improvement of as
+little as .85 seconds</strong> (source: WPO Stats).</p>
+
+<p>Slow loading is detrimental for <strong>search engine optimization
+(SEO)</strong> because it can lower your site's ranking, resulting in fewer
+visits, reads, and conversions; in 2018, Google will implement site speed as a
+ranking signal in its mobile searches (source: Search Engine Land).</p>
+</blockquote>
+
+---
+
+# Le langage imposé
+
+<blockquote class="twitter-tweet" data-conversation="none" data-lang="fr"><p lang="fr" dir="ltr">c&#39;est vraiment ça. On dirait le Javascript. Tout le monde en fait alors qu&#39;on sait que c&#39;est pourri.</p>&mdash; Seboss666 (@Seboss666) <a href="https://twitter.com/Seboss666/status/768819685823508481?ref_src=twsrc%5Etfw">25 août 2016</a></blockquote>
+
+<blockquote class="twitter-tweet" data-conversation="none" data-lang="fr"><p lang="fr" dir="ltr">ah tu veux dire que le javascript c&#39;est nul. en effet.</p>&mdash; Alice Voidstar (@CobaltVelvet) <a href="https://twitter.com/CobaltVelvet/status/832181927377514496?ref_src=twsrc%5Etfw">16 février 2017</a></blockquote>
+
+---
+
+# Optimisation des langages dynamiques
+
+```js
+function f(a) { return a + 42; }
+```
+
+--
+
+```js
+f(1); // integer
+```
+
+--
+
+```js
+f(13.37); // floating-point
+```
+
+--
+
+```js
+f("hi there"); // string
+```
+
+--
+
+```js
+f(false); // ???
+f({ }); // ???
+f({ toString() { return "hello, " + "world"; }}); // ???
+f({ valueOf() { alert('lol'); return 1; }}); // ???
+```
+
+???
+
+- langage dynamique => rend les optimisations plus difficiles
+- inférence de types + hypothèses vérifiées dynamiquement
+- décompilation, compilation, recompilation
+- garbage collector -> pauses à l'exécution
+
+---
+
+class: center, middle
+
+# Compiler vers le Web
+
+### (semi) choix du langage
+
+### code JS généré (supposé) efficace
+
+???
+
+D'où la compilation vers le web : prendre un langage de son choix, et le
+compiler vers du JS à l'aide d'un outil qui fera toutes sortes d'optimisations
+pour nous.
+
+---
+
+class: white-bg
+background-image: url(./img/logo.png)
+
+---
+
+class: bigger
+
+# WebAssembly ?
+
+### Un **environnement d'exécution** stable, bien défini, sécurisé, rapide comme du natif.
+
+???
+
+- stable = par plateforme, architecture, etc.
+- bien défini = le moins de comportements indéfinis possibles
+
+--
+
+### Un **standard** créé en coopération par Apple, Google, Microsoft et Mozilla.
+
+???
+
+Draft W3C depuis le 15 fevrier 2018
+
+WG/CG (réunion tous les mois / deux semaines)
+
+--
+### Un format **binaire** compact, portable, rapide à charger et à *compiler*.
+
+???
+
+Bytecode.
+
+--
+### Le tout intégré dans la plateforme Web.
+
+???
+
+- plus de plugins (cause de crashes, pas besoin de les mettre à jour).
+- possibilité d'interagir avec JS dans les deux sens (de JS vers wasm, ou wasm
+vers JS).
+
+---
+
+class: middle, center, white-bg
+
+# Support des navigateurs
+
+![Dans tous les navigateurs](./img/browsers.png)
+
+???
+
+A l'heure de l'écriture, représente 75% des navigateurs selon CanIUse. (71% en
+mai)
+
+Existence d'un polyfill dans un sous ensemble de JS (asm.js) => amélioration
+progressive.
+
+---
+
+# C'est efficace ?
+
+--
+
+## plus rapide à démarrer
+## plus rapide à s'exécuter
+## plus compact
+
+???
+
+Démarrage : fichier binaire, pas de parsing, pas d'exécution lazy, tiered
+compilation, streaming compilation, mise en cache.
+
+Exécution : langage statique typé, correspondance directe avec le CPU, pas
+d'allocation mémoire (GC), précompilation par un gros compilateur. On est
+seulement à un petit écart de 20% des performances natives, et ça n'arrête pas
+d'évoluer !
+
+Compact : binaire, moins à télécharger, moins de représentations internes en
+mémoire, moins à stocker en mémoire, économie en bande-passante donc coûts
+serveurs.
+
+--
+
+## debuggable
+
+???
+
+Debugable : format binaire, mais représentation textuelle pour pouvoir
+inspecter le code source et le deboguer ! et source maps !
+
+---
+
+# Cas d'utilisation
+
+## Porter des [programmes complets](https://www.youtube.com/watch?v=TwuIRcpeUWE)
+
+???
+
+Programmes complets : Unity / Unreal Engine; outils de DAO.
+
+--
+
+## Porter des [libs](https://websightjs.com/index-video.html)
+
+???
+
+Porter des libs : OpenCV, NaCL (crypto), compression, codecs, etc.
+
+Demultiplexer utilisé sur Twitch.tv;
+
+--
+
+## Utilisation dans des [libs](https://www.youtube.com/watch?v=qfnkDyHVJzs&feature=youtu.be&t=5880)
+
+???
+
+Utilisation dans des libs : React pour Fiber, Glimmer VM pour Ember, etc.
+
+--
+
+## Utilisation dans des [apps web](http://www.adultswim.com/etcetera/elastic-man/)
+
+???
+
+Faire une app web à partir de rien dans un autre langage que JS, ou porter des
+parties critiques pour la performance.
+
+---
+
+# Pourquoi dans une app Web ?
+
+--
+
+### Résoudre une problématique spécifique de performances
+
+???
+
+Premature optimization root of all evil.
+
+- Trouver les 20% de code qui prennent 80% du temps, avec un profiler.
+- Optimiser ces 20%.
+- S'il y a un autre problème de performance, reprendre un profiler.
+
+--
+
+### Profiter d'autres langages et de leurs environnements...
+
+???
+
+- plus simple que d'apprendre un nouveau langage, transfert de connaissances
+- paradigmes différents de ceux dans JS
+- possibilité de profiter du tooling (IDEs, etc.)
+
+--
+
+### ... tout en profitant de la plateforme Web
+
+???
+
+- facile à distribuer (on évite les app stores sur mobile ou desktop).
+- facile à mettre à jour, à déployer comme on veut, de faire du A/B testing.
+- la sécurité de la plateforme web (Content Security Policy, Subresource
+Integrity, sandboxing...).
+- intégration avec la plateforme Web
+- source maps : montre le code source du langage utilisé directement dans le
+debugger.
+- profiler
+
+---
+
+class: bigger
+
+# Ces langages qui compilent vers wasm
+
+- C/C++ ([Emscripten](http://emscripten.org/), LLVM, CheerP)
+- .NET ([Blazor](https://github.com/aspnet/blazor))
+- Go
+- Elixir
+- Faust
+- JVM
+- Kotlin (native)
+
+--
+- [... et tous les autres](https://github.com/appcypher/awesome-wasm-langs)
+
+--
+- Rust !
+
+    </textarea>
+    <script src="remark.js">
+    </script>
+    <script>
+var slideshow = remark.create({
+    highlightLanguage: "javascript",
+    highlightLines: true,
+    countIncrementalSlides: false
+});
+    </script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </body>
+</html>

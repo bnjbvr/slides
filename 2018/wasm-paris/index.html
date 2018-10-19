@@ -71,9 +71,9 @@
 
 class: center, middle
 
-# Des applications Web rapides avec WebAssembly
+# Comment compiler vers le Web
 
-### ou comment utiliser [votre langage] sur le Web !
+### par l'exemple de Rust
 
 ???
 
@@ -101,286 +101,38 @@ WebAssembly, etc.
 
 ---
 
-class: middle, center
-
-# Deux gros problèmes du Web ?
-
-![First world problems](./img/firstworldproblem.jpg)
-
----
-
-# Les performances
-
-<blockquote>
-<p>Loading time is a major factor in page abandonment and loyalty; 53% of users
-report that they abandon sites that take <strong>more than three seconds to
-load</strong> (source: SOASTA Google study report).</p>
-
-<p>Users visit more often, stay longer, search more, and buy more frequently on
-sites that load quickly than on slower ones; one company found that a
-conversion increase of 7% resulted from <strong>a speed improvement of as
-little as .85 seconds</strong> (source: WPO Stats).</p>
-
-<p>Slow loading is detrimental for <strong>search engine optimization
-(SEO)</strong> because it can lower your site's ranking, resulting in fewer
-visits, reads, and conversions; in 2018, Google will implement site speed as a
-ranking signal in its mobile searches (source: Search Engine Land).</p>
-</blockquote>
-
----
-
-# Le langage imposé
-
-<blockquote class="twitter-tweet" data-conversation="none" data-lang="fr"><p lang="fr" dir="ltr">c&#39;est vraiment ça. On dirait le Javascript. Tout le monde en fait alors qu&#39;on sait que c&#39;est pourri.</p>&mdash; Seboss666 (@Seboss666) <a href="https://twitter.com/Seboss666/status/768819685823508481?ref_src=twsrc%5Etfw">25 août 2016</a></blockquote>
-
-<blockquote class="twitter-tweet" data-conversation="none" data-lang="fr"><p lang="fr" dir="ltr">ah tu veux dire que le javascript c&#39;est nul. en effet.</p>&mdash; Alice Voidstar (@CobaltVelvet) <a href="https://twitter.com/CobaltVelvet/status/832181927377514496?ref_src=twsrc%5Etfw">16 février 2017</a></blockquote>
-
----
-
-# Optimisation des langages dynamiques
-
-```js
-function f(a) { return a + 42; }
-```
-
---
-
-```js
-f(1); // integer
-```
-
---
-
-```js
-f(13.37); // floating-point
-```
-
---
-
-```js
-f("hi there"); // string
-```
-
---
-
-```js
-f(false); // ???
-f({ }); // ???
-f({ toString() { return "hello, " + "world"; }}); // ???
-f({ valueOf() { alert('lol'); return 1; }}); // ???
-```
-
-???
-
-- langage dynamique => rend les optimisations plus difficiles
-- inférence de types + hypothèses vérifiées dynamiquement
-- décompilation, compilation, recompilation
-- garbage collector -> pauses à l'exécution
-
----
-
-class: center, middle
-
-# Compiler vers le Web
-
-### (semi) choix du langage
-
-### code JS généré (supposé) efficace
-
-???
-
-D'où la compilation vers le web : prendre un langage de son choix, et le
-compiler vers du JS à l'aide d'un outil qui fera toutes sortes d'optimisations
-pour nous.
-
----
-
-class: white-bg
-background-image: url(./img/logo.png)
-
----
-
 class: bigger
 
-# WebAssembly ?
+# Le problème
 
-### Un **environnement d'exécution** stable, bien défini, sécurisé, rapide comme du natif.
-
-???
-
-- stable = par plateforme, architecture, etc.
-- bien défini = le moins de comportements indéfinis possibles
+### Est-ce que je peux compiler [mon langage favori] vers WebAssembly ?
 
 --
-
-### Un **standard** créé en coopération par Apple, Google, Microsoft et Mozilla.
-
-???
-
-Draft W3C depuis le 15 fevrier 2018
-
-WG/CG (réunion tous les mois / deux semaines)
-
---
-### Un format **binaire** compact, portable, rapide à charger et à *compiler*.
-
-???
-
-Bytecode.
-
---
-### Le tout intégré dans la plateforme Web.
-
-???
-
-- plus de plugins (cause de crashes, pas besoin de les mettre à jour).
-- possibilité d'interagir avec JS dans les deux sens (de JS vers wasm, ou wasm
-vers JS).
+### Quelles sont les étapes avant de pouvoir utiliser [mon langage favori] sur le Web ?
 
 ---
 
-class: middle, center, white-bg
+# Une proposition de réponse
 
-# Support des navigateurs
+### Pour des libs
 
-![Dans tous les navigateurs](./img/browsers.png)
-
-???
-
-A l'heure de l'écriture, représente 75% des navigateurs selon CanIUse. (71% en
-mai)
-
-Existence d'un polyfill dans un sous ensemble de JS (asm.js) => amélioration
-progressive.
-
----
-
-# C'est efficace ?
+- Compiler le langage simplement
+- Générer des *bindings* simplement
 
 --
 
-## plus rapide à démarrer
-## plus rapide à s'exécuter
-## plus compact
+### Pour des apps web
 
-???
-
-Démarrage : fichier binaire, pas de parsing, pas d'exécution lazy, tiered
-compilation, streaming compilation, mise en cache.
-
-Exécution : langage statique typé, correspondance directe avec le CPU, pas
-d'allocation mémoire (GC), précompilation par un gros compilateur. On est
-seulement à un petit écart de 20% des performances natives, et ça n'arrête pas
-d'évoluer !
-
-Compact : binaire, moins à télécharger, moins de représentations internes en
-mémoire, moins à stocker en mémoire, économie en bande-passante donc coûts
-serveurs.
+- Générer des correspondances pour les APIs du Web
+- Créer des frameworks Web basés sur le langage
 
 --
 
-## debuggable
+### En parallèle
 
-???
-
-Debugable : format binaire, mais représentation textuelle pour pouvoir
-inspecter le code source et le deboguer ! et source maps !
-
----
-
-# Cas d'utilisation
-
-## Porter des [programmes complets](https://www.youtube.com/watch?v=TwuIRcpeUWE)
-
-???
-
-Programmes complets : Unity / Unreal Engine.
-
---
-
-## Porter des [libs](https://websightjs.com/index-video.html)
-
-???
-
-Porter des libs : OpenCV, NaCL (crypto), compression, codecs, etc.
-
---
-
-## Utilisation dans des [libs](https://www.youtube.com/watch?v=qfnkDyHVJzs&feature=youtu.be&t=5880)
-
-???
-
-Utilisation dans des libs : React pour Fiber, Glimmer VM pour Ember, etc.
-
---
-
-## Utilisation dans des [apps web](http://www.adultswim.com/etcetera/elastic-man/)
-
-???
-
-Faire une app web à partir de rien dans un autre langage que JS, ou porter des
-parties critiques pour la performance.
-
----
-
-# Pourquoi dans une app Web ?
-
---
-
-### Résoudre une problématique spécifique de performances
-
-???
-
-Premature optimization root of all evil.
-
-- Trouver les 20% de code qui prennent 80% du temps, avec un profiler.
-- Optimiser ces 20%.
-- S'il y a un autre problème de performance, reprendre un profiler.
-
---
-
-### Profiter d'autres langages et de leurs environnements...
-
-???
-
-- plus simple que d'apprendre un nouveau langage, transfert de connaissances
-- paradigmes différents de ceux dans JS
-- possibilité de profiter du tooling (IDEs, etc.)
-
---
-
-### ... tout en profitant de la plateforme Web
-
-???
-
-- facile à distribuer (on évite les app stores sur mobile ou desktop).
-- facile à mettre à jour, à déployer comme on veut, de faire du A/B testing.
-- la sécurité de la plateforme web (Content Security Policy, Subresource
-Integrity, sandboxing...).
-- intégration avec la plateforme Web
-- source maps : montre le code source du langage utilisé directement dans le
-debugger.
-- profiler
-
----
-
-class: bigger
-
-# Ces langages qui compilent vers wasm
-
-- C/C++ ([Emscripten](http://emscripten.org/), LLVM, CheerP)
-- .NET ([Blazor](https://github.com/aspnet/blazor))
-- Go
-- Elixir
-- Faust
-- JVM
-- Kotlin (native)
-
---
-- [... et tous les autres](https://github.com/appcypher/awesome-wasm-langs)
-
---
-- Rust !
+- Pouvoir compiler le langage **efficacement**
+- Un environnement de développement intégré
+- Des outils de debug intégrés
 
 ---
 
@@ -493,6 +245,14 @@ For more information about this error, try
 
 ---
 
+class: middle, center
+
+# Etape 1
+
+### Compiler Rust vers wasm
+
+---
+
 # Installer Rust
 
 ### A ne faire qu'une seule fois ⚠️
@@ -570,7 +330,8 @@ const response = fetch('example.wasm');
             }
         })
     );
-    alert(instance.add_one(41)); // 42
+    alert(instance.add_one(41));
+    // alert(42), console.log(41)
 })();
 ```
 
@@ -626,11 +387,15 @@ Des problèmes inhérents à tous les langages
 
 class: center, middle
 
-# Et si des outils faisaient le travail pour nous ?
+# Etape 2 : des générateurs de *bindings*
+
+### Et si des outils faisaient le travail pour nous ?
 
 ---
 
 # Créer des projets
+
+Une seule fois :
 
 ```bash
 # wasm-pack to simplify build process
@@ -641,14 +406,15 @@ cargo install cargo-generate
 npm install -g create-wasm-app
 ```
 
+Pour chaque projet :
+
 ```bash
-# Initialize Rust project from a rust-wasm template
+# init Rust project from rust-wasm template
 cargo generate \
     --git https://github.com/rustwasm/wasm-pack-template
 cd example-project
 wasm-pack build # installs deps + initial build
-# Initialize web frontend from a wasm template
-npm init wasm-app www
+npm init wasm-app www # init frontend from wasm template
 (cd www && npm install)
 ```
 
@@ -766,32 +532,21 @@ class: middle, center, bigger
 
 class: bigger
 
-# Des outils génériques
+# Etapes suivantes
 
-### wasm-gc
-### wasm-bindgen
-### wasm-pack
-### wasm-snip
+1. des bindings pour les APIs JS et du Web
 
---
-### => des bindings génériques (Rust: [js-sys](https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys))
-### => des frameworks web (Rust: [yew](https://github.com/DenisKolodin/yew))
+ - [js-sys](https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys)
+ - [web-sys](https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys)
 
 ???
 
-- `wasm-gc`: supprime le code mort dans le module wasm.
-- `wasm-bindgen`: facilite la création de bindings entre les langages.
-- `wasm-pack`: gère la compilation, l'utilisation de `bindgen`, la publication
-sur `npm`.
-- `wasm-snip`: remplace le code présumé mort du module wasm par un breakpoint
-logiciel.
+générés à la main (pour JS), automatiquement depuis WebIDL (pour le Web)
 
-Approche agnostique du langage => une solution possible qui pourrait se
-généraliser.
+--
+2. des frameworks Web
 
-Ce n'est que le début pour ces outils !
-
-Quid des autres langages ?
+  - [yew](https://github.com/DenisKolodin/yew)
 
 ---
 
