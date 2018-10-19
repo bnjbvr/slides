@@ -126,6 +126,10 @@ class: bigger
 - Générer des correspondances pour les APIs du Web
 - Créer des frameworks Web basés sur le langage
 
+???
+
+Donne la possibilité de faire des apps isomorphiques !
+
 --
 
 ### En parallèle
@@ -136,7 +140,7 @@ class: bigger
 
 ---
 
-class: middle, center
+class: middle, center, white-bg
 
 # Rust
 
@@ -159,6 +163,8 @@ Exemple de langage bien supporté pour être compilé vers du WebAssembly, les
 mêmes concepts peuvent s'appliquer à tous les langages !
 
 ---
+
+class: white-bg
 
 # C++ 👣 🔫
 
@@ -185,6 +191,8 @@ Que provoque ce code ?
 
 ---
 
+class: white-bg
+
 # 👣 🔫
 
 ```bash
@@ -208,6 +216,8 @@ Meme pas le bon gout de provoquer un segfault !
 
 ---
 
+class: white-bg
+
 # Rust 😅
 
 ```rust
@@ -222,6 +232,8 @@ fn main() {
 ```
 
 ---
+
+class: white-bg
 
 # Sauvé par le compilateur !
 
@@ -538,6 +550,7 @@ class: bigger
 
  - [js-sys](https://github.com/rustwasm/wasm-bindgen/tree/master/crates/js-sys)
  - [web-sys](https://github.com/rustwasm/wasm-bindgen/tree/master/crates/web-sys)
+ - [stdweb](https://github.com/koute/stdweb)
 
 ???
 
@@ -546,19 +559,42 @@ générés à la main (pour JS), automatiquement depuis WebIDL (pour le Web)
 --
 2. des frameworks Web
 
-  - [yew](https://github.com/DenisKolodin/yew)
+  - [yew](https://github.com/DenisKolodin/yew) basé sur stdweb
+  - [percy](https://github.com/chinedufn/percy) basé sur web_sys
+
+---
+
+# Exemple de la doc de Yew
+
+```rust
+html! {
+    <section class="todoapp",>
+        <header class="header",>
+            <h1>{ "todos" }</h1>
+            { view_input(&model) }
+        </header>
+        <section class="main",>
+            <input class="toggle-all",
+                   type="checkbox",
+                   checked=model.is_all_completed(),
+                   onclick=|_| Msg::ToggleAll, />
+            { view_entries(&model) }
+        </section>
+    </section>
+}
+```
 
 ---
 
 class: bigger
 
-# Exemple : la JVM & [TeaVM](http://teavm.org/)
+# Un autre monde : la JVM & [TeaVM](http://teavm.org/)
 
-### Compiler le bytecode Java + runtime
+### compile le bytecode Java + runtime
 
 ???
 
-Plein d'autres manières de faire :
+Plein d'autres approches :
 - transpiler depuis Java,
 - CheerpJ, autre exemple qui compile directement le bytecode,
 - portage JVM (e.g. Doppio) : n'importe quel bytecode JVM, mais plus grande complexité ou
@@ -601,52 +637,55 @@ public class Client {
     public static int add(int a) {
         return a + get_rhs();
     }
-
-    public static void main(String[] args) {
-    }
 }
 ```
 
 ---
 
-# Et le futur ?
+# Et [le futur](https://github.com/WebAssembly/proposals) ?
 
 --
 
-### garbage collector
+#### Améliorer le support des langages
+
+- reference types
+- garbage collector
+- tail calls
 
 --
 
-### host bindings
+#### Améliorer le support des bindings
+
+- host bindings
+- type reflection in JS
 
 --
 
-### threads
+#### Améliorer les performances
 
---
-
-### exception handling
-
---
-
-### SIMD
+- multi-value
+- exception handling
+- threads
+- SIMD
 
 ---
 
-class: center, middle
+class: bigger
 
 # En résumé
 
-### plus rapide à charger
-### plus rapide à l'exécution
+### Les avantages !
 
---
+- plus rapide à charger
+- plus rapide à l'exécution
+- plus simple à développer
 
-### *B.Y.O.L* (Bring Your Own Langage)
+### Les étapes !
 
---
-
-### Créer des sites Web avec votre langage
+- supporter le langage
+- pouvoir générer des bindings
+- générer des bindings Web
+- écrire des frameworks
 
 ---
 
@@ -655,6 +694,7 @@ class: middle, center
 # Expérimentez !
 
 ### slides : [bnjbvr.github.io/slides/2018/wasm-paris](https://bnjbvr.github.io/slides/2018/wasm-paris)
+### Proposals : [github.com/WebAssembly/proposals](https://github.com/WebAssembly/proposals)
 ### Rust+Wasm : [github.com/rustwasm](https://github.com/rustwasm/)
 ### WebAssembly : [webassembly.org](https://webassembly.org/)
 ### Infos : [@WasmWeekly](https://twitter.com/WasmWeekly)
