@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebAssembly, histoire et fonctionnement</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+
+      @import url(https://fonts.googleapis.com/css?family=Zilla+Slab);
+      @import url(https://fonts.googleapis.com/css?family=Roboto);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono);
+
+      .remark-slide-content {
+          background-color: #e5f2f5;
+      }
+
+      body {
+          font-family: 'Roboto', serif;
+          color: #189ab4;
+      }
+
+      h1, h2, h3 {
+          font-family: 'Zilla Slab', sans-serif;
+          font-weight: normal;
+      }
+
+      h1 {
+          color: #05445e;
+      }
+
+      a {
+          text-decoration: none;
+          color: #05445e;
+      }
+
+      .white-bg, .white-bg h1 {
+          background-color: white;
+          color: black;
+      }
+
+      .black-bg, .black-bg h1 {
+          background-color: black;
+          color: white;
+      }
+
+      .black-bg a {
+          color: #3abce6;
+      }
+
+      blockquote {
+          font-style: italic;
+          font-size: 1.2em;
+      }
+      blockquote strong {
+          color: #189ab4;
+      }
+
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.2em;
+      }
+
+      .bigger {
+          font-size: 1.8em;
+      }
+      .bigger img {
+          height: 10em;
+      }
+      .bigger .remark-slide-number {
+          font-size: 20px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <textarea id="source" rows="100%" cols="100%">
+
+class: center, middle
+
+# WebAssembly, histoire et fonctionnement
+
+???
+
+Notes de celui qui parle. Si vous voyez cela, il y a un raté quelque part.
+
+---
+
+class: black-bg
+background-image: url(./img/embark.png)
+background-size: 50% auto
+
+# [@bnjbvr](https://twitter.com/bnjbvr)
+
+.left[such [floss](https://framasoft.org)]
+
+.right[very [code](https://github.com/bnjbvr)]
+
+.left[so [kresus](https://kresus.org)]
+
+.bigger.right[wow]
+
+???
+
+Je suis ingénieur logiciel, travaille pour mozilla, je raconte ma vie,
+blablabla on n'est pas là pour écouter ma biographie.
+
+---
+
+class: black-bg
+background-image: url(./img/mozilla.png)
+background-size: 50%
+
+# Tout a commencé avec un stage 🤓
+
+???
+
+- aux alentours de 2013
+
+---
+
+class: center, middle
+
+# 💖 JavaScript
+
+![](./img/js.png)
+
+???
+
+- tout commence avec JavaScript, le langage de "la logique" dans le Web
+- postulat de base :
+    - rendre JavaScript plus rapide permet de faire de nouvelles choses sur le Web
+    - et hors du web avec nodejs
+    - Mozilla aime le web
+        - plateforme ouverte
+        - utilisateur a le controle
+        - distribution facile
+        - pervasif
+    - concurrence avec autres moteurs
+    - ergo, on investit dans les performances de JavaScript
+
+---
+
+# 🚤 De l'importance des perfs
+
+<blockquote>
+<p>Loading time is a major factor in page abandonment and loyalty; 53% of users
+report that they abandon sites that take <strong>more than three seconds to
+load</strong> (source: SOASTA Google study report).</p>
+
+<p>Users visit more often, stay longer, search more, and buy more frequently on
+sites that load quickly than on slower ones; one company found that a
+conversion increase of 7% resulted from <strong>a speed improvement of as
+little as .85 seconds</strong> (source: WPO Stats).</p>
+
+<p>Slow loading is detrimental for <strong>search engine optimization
+(SEO)</strong> because it can lower your site's ranking, resulting in fewer
+visits, reads, and conversions; in 2018, Google will implement site speed as a
+ranking signal in its mobile searches (source: Search Engine Land).</p>
+</blockquote>
+
+---
+
+# 🚄 Comment accélérer JS ?
+
+```javascript
+function f(a, b) {
+    return a + b;
+}
+
+let sum = 0;
+for (let i = 0; i < 10000; ++i) {
+    sum += f(i, i + 1);
+}
+console.log('sum =', sum);
+```
+
+???
+
+- langage interprété
+- typage dynamique
+
+---
+
+class: center, middle
+
+# 🚄 Comment accélérer JS ?
+
+![](./img/jit-diagram.png)
+
+???
+
+- Explications rapides sur les JITs
+
+---
+
+# 🤡 Un langage dynamique
+
+```javascript
+function f(a, b) {
+    return a + b;
+}
+
+f(1, 2); // 3
+f(0.5, -Infinity); // -Infinity
+f("bon", "jour"); // bonjour
+f({
+    valueOf() {
+        alert('lol');
+        return 42;
+    }
+}, 13); // renvoie 55
+```
+
+---
+
+class: white-bg
+
+# 🐉 Emscripten et LLVM
+
+![](img/emscripten.png)
+![](img/llvm.png)
+
+???
+
+Emscripten = outil qui permet de compiler des gros programmes existants vers
+JS.
+
+Aubaine énorme ! possible de développer "une seule fois" en C ou C++, et
+réutiliser tel quel vers le Web.
+
+Des programmes ambitieux sont compilés vers le web, de plus en plus gros et de
+plus en plus gourmands : codecs, sqlite (base de données), jeux vidéos,...
+
+Quelques problèmes sur le fait d'utiliser JavaScript :
+
+- temps de chargement du code pouvant être très longs
+- le code est interprété au début, et s'exécute donc lentement pendant la
+période de chauffe
+- la recompilation du code peut prendre du temps et causer des ralentissements
+- si une hypothèse implantée dans le code généré est invalidée, alors
+l'exécution retourne dans l'interpréteur
+- le code est parfois interrompu par le GC
+
+---
+
+class: white-bg
+background-image: url(./img/asmjs.png)
+background-size: 50%
+
+???
+
+- spécification conçue par Mozilla
+- Sous-ensemble strict de JavaScript => s'exécute absolument de partout de
+base
+    - pas une nouvelle extension que les autres navigateurs doivent supporter
+    - une convention, à partir du moment où le code contient l'annotation "use
+    asm"
+    - utilise des annotations qui enlèvent tout doute possible quant aux types
+    des variables
+- choix de conception d'asm.js :
+    - pas de GC
+    - généré par Emscripten ou des compilateurs qui font déjà le plus gros
+    travail d'optimisation de leur côté
+    - compilé dés qu'il est chargé dans le navigateur vers du code machine
+- propriétés :
+    - très rapide à l'exécution
+    - pas de "sursauts"
+- beaucoup d'idées qui seront reprises dans webassembly:
+    - peu de primitives de base
+    - bloc de mémoire linéaire exclusivement dédié au module de code,
+    adressable, chaque accès mémoire est vérifié
+    - possibilité d'importer du code depuis l'extérieur, pour interagir avec
+    l'environnement
+    - tables de fonctions pour implémenter le polymorphisme d'objets en C++
+    - variables globales isolées dans le module
+
+---
+
+# Exemple d'asm.js
+
+```javascript
+function m(stdlib)
+{
+  "use asm";
+  var abs = stdlib.Math.abs;
+  function f(d)
+  {
+    d = +d;
+    return (~~(5.0 - +abs(d)))|0;
+  }
+  return f;
+}
+
+// Instancier le module (seulement une fonction ici)
+var f = m(this);
+// Exécuter la fonction
+if (f(0.2) !== 4) { console.error("invalid result!"); }
+```
+
+???
+
+- commenter le code
+- alien, mais pas écrit par des humains
+
+---
+
+class: white-bg
+background-image: url(./img/pnacl.png)
+background-size: 70%
+
+# Pendant ce temps-là...
+
+???
+
+- Google a envie d'un support du code natif pour le web
+- créé la spec NaCl (Native Client), de manière pas ouverte, l'implémente et
+rajoute le support dans Chrome en même temps
+- mais pas portable ; itération suivante "portable" pNaCl
+    - quelques points communs avec wasm : une étape de compilation super rapide
+    dans le navigateur, du format portable pexe vers le code machine natif
+    - utilise LLVM pour la compilation
+- en dehors de la plateforme Web (dispo uniquement sur Chrome Web Store) = un Flash 2.0
+- Microsoft voit l'intérêt d'asm.js et décide de l'optimiser particulièrement
+dans Chakra, leur moteur JS de l'époque
+- il y a donc un vrai besoin, une vraie envie d'exécuter du code natif dans le
+Web, comment on fait ?
+
+---
+
+class: white-bg
+background-image: url(./img/logo.png)
+
+---
+
+class: bigger
+
+# C'est quoi WebAssembly ?
+
+### Un **environnement d'exécution** rapide, stable, bien défini, aux performances proches du natif.
+--
+
+### Un nouveau **standard** créé en coopération par Apple, Google, Microsoft et Mozilla.
+
+--
+### Un format **binaire** compact, portable, rapide à charger et à *compiler*.
+
+--
+
+### Tout ça intégré dans la plateforme Web (et pas que).
+
+---
+
+# Propriétés
+
+--
+
+## format compact
+
+## démarre rapidement
+
+## s'exécute très rapidement
+
+## sécurisé
+
+## extensible
+
+???
+
+Compact : binaire, moins à télécharger, moins de représentations internes en
+mémoire, moins à stocker en mémoire, économie en bande-passante donc coûts
+serveurs.
+
+Démarrage : fichier binaire compact, format défini pour pouvoir être compilé en
+une seule passe, streaming compilation, mise en cache du code généré.
+
+Exécution : langage statique typé, correspondance directe avec le CPU, pas de
+gestion automatique de la mémoire (GC), précompilation par un gros compilateur
+en amont (LLVM).
+Environ écart de 20% avec les perfs natives, selon les cas d'utilisation.
+
+Sécurisé : environnement bac à sable, mémoire isolée, pas de sauts ou d'appels
+de fonction arbitraires (i.e. pas de goto), conception qui préfère les erreurs
+aux exploits (better safe than sorry! e.g. accès mémoires contrôlés)
+
+Extensible : possible d'interagir avec l'environnement via imports, extensions
+de la spec, sections binaires définissables par les développeurs
+
+---
+
+class: white-bg
+background-image: url(./img/compilation.png)
+background-size: 90%
+
+# Double compilation
+
+---
+
+# Petit exemple
+
+```lisp
+(module
+  (type $t0 (func (result i32)))
+  (type $t2 (func (param i32) (result i32)))
+  (import "env" "value" (func $value (type $t0)))
+  (func $add
+        (export "add")
+        (type $t2) (param $p0 i32) (result i32)
+    (i32.add
+        (call $value)
+        (get_local $p0)
+    )
+  )
+)
+```
+
+???
+
+- Commenter les différentes sections
+
+---
+
+# API JavaScript
+
+```javascript
+let bytes = [...];
+let module = WebAssembly.compile(bytes);
+let instance = WebAssembly.instantiate(module, {
+    env: {
+        value() {
+            return 42;
+        }
+    }
+});
+instance.exports.add(13);
+```
+
+---
+
+# (Quelques) sections binaires
+
+- `Type section` : toutes les signatures des fonctions qui vont être utilisées.
+- `Import section` : liste des entités importées dont le module a besoin pour
+être instancié.
+- `Function section` : liste des fonctions définies directement par le module.
+- `Export section` : tous les entités qui sont ré exportées par le module
+- `Code section`: le corps des fonctions elles-mêmes, avec des opcodes par
+opération.
+
+---
+
+
+# Merci !
+
+### Site officiel : [webassembly.org](https://webassembly.org/)
+### [A cartoon intro to WebAssembly](https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly)
+### News: [@WasmWeekly](https://twitter.com/WasmWeekly)
+### [@bnjbvr](https://twitter.com/bnjbvr)
+
+    </textarea>
+    <script src="remark.js">
+    </script>
+    <script>
+var slideshow = remark.create({
+    highlightLanguage: "javascript",
+    highlightLines: true,
+    countIncrementalSlides: false
+});
+    </script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </body>
+</html>
