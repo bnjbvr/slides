@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>État de WebAssembly en 2023</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+
+      @import url(https://fonts.googleapis.com/css?family=Zilla+Slab);
+      @import url(https://fonts.googleapis.com/css?family=Roboto);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono);
+
+      .remark-slide-content {
+          background-color: #e5f2f5;
+          font-size: 2.2rem;
+      }
+
+      body {
+          font-family: 'Roboto', serif;
+          color: #187aa4;
+      }
+
+      h1, h2, h3 {
+          font-family: 'Zilla Slab', sans-serif;
+          font-weight: normal;
+      }
+
+      h1 {
+          color: #05445e;
+      }
+
+      a {
+          text-decoration: none;
+          color: #38bad4;
+      }
+
+      .white-bg, .white-bg h1 {
+          background-color: white;
+          color: black;
+      }
+
+      .black-bg, .black-bg h1 {
+          background-color: black;
+          color: white;
+      }
+
+      .black-bg a {
+          color: #3abce6;
+      }
+
+      blockquote {
+          font-style: italic;
+          font-size: 1.2em;
+      }
+      blockquote strong {
+          color: #189ab4;
+      }
+
+      .remark-code, .remark-inline-code {
+          font-family: 'Ubuntu Mono';
+          font-size: 1.2em;
+      }
+
+      .intro img {
+          height: 6rem;
+          margin-right: 1em;
+      }
+
+      .smaller {
+          font-size: 1.8rem;
+      }
+      .much-smaller {
+          font-size: 1.3rem;
+      }
+
+      .smaller .remark-code {
+          font-size: 1.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source" rows="100%" cols="100%">
+class: center, middle
+
+# WebAssembly en 2023
+
+---
+class: intro, black-bg, center, middle
+
+# Qui suis-je ?
+
+![Ma tête en déguisement de mariage](../../img/moi.jpg)
+![Logo de mozilla](../../img/mozilla.png)
+![Logo d'Embark Studios](../../img/embark.png)
+
+???
+
+- développeur depuis trop longtemps
+- impl de wasm dans Firefox, puis wasmtime
+- utilisateur de wasm chez Embark Studios
+- un pied dans le dev web avec Kresus
+
+---
+
+# Sommaire
+
+- Sommaire (⬅ vous êtes ici)
+- C'est quoi déjà WebAssembly ? 🤔
+- Cas d'utilisation 👀
+- Les évolutions du langage 📈
+    - WASI 📂
+    - Component Model 🧱
+
+???
+
+- Si on arrive à avoir du temps pour les questions réponses ce sera un miracle.
+
+---
+
+# WebAssembly c'est quoi ?
+
+- Un format binaire (*bytecode*)
+- *Cible de compilation*
+- Un environnement d'exécution
+- Standardisé de manière ouverte
+
+???
+
+- .wasm, compact
+- Programmes générés par des compilateurs
+- CPU ne parle pas wasm, donc exécution
+- Navigateurs d'abord, puis standard W3C, depuis 2019
+
+---
+
+# Cours d'histoire
+
+- 2015 : annonce
+- Mars 2017 : version 1.0, "MVP"
+- Décembre 2019 : recommendation W3C
+- Avril 2022 : version 2.0 (draft W3C)
+
+---
+background-image: url(../../img/compilation.png)
+background-size: 100% auto
+
+# Comment ça marche ?
+
+???
+
+- Plein de langages qui compilent vers WASM
+- Portable
+
+---
+
+# Ça fait quoi ?
+
+- Opérations arithmétiques (i32/i64, f32/64), liées à la mémoire, etc.
+- Possède son propre bloc de mémoire
+- *Auto-contenu* : imports / exports
+
+???
+
+- Mémoire partagé avec le reste du monde
+- imports = fonctions qui proviennent de l'hôte
+- exports = fonctions fournies au monde extérieur
+
+---
+
+# Propriétés
+
+- Rapide à l'*exécution*
+- Rapide à l'*instantiation*
+- Sécurisé (*sandbox*)
+- Portable
+
+???
+
+- 20% plus lent que du code natif, si les fonctionnalités utilisées par le programme natif sont également disponibles dans wasm
+- instantation rapide car juste "traduction"
+- "sandboxé", ne sait rien faire par défaut
+- compilé une fois, tourne partout ensuite
+
+---
+class: center, middle
+
+# Cas d'usages
+
+---
+
+# **Web**(Assembly)
+
+- Hot code
+- Partage de code métier
+- Portage d'app complète
+- Le code front dans votre langage favori
+
+???
+
+- cryptographie
+- players Disney+ / Netflix
+- Photoshop / jeux vidéos
+- Blazor en C#, yew en Rust, etc.
+
+---
+
+# Virtualisation
+
+> Faire tourner le code de quelqu'un d'autre, de manière sécurisée et rapide
+
+???
+
+- éviter les exploits
+- éviter les supply chain attacks
+
+---
+
+# Virtualisation
+
+- Architecture de plugins
+- Containers très légers
+    - VM > container > wasm
+- Architectures cloud
+    - Dev ops
+    - FaaS
+    - Serverless / Edge computing
+
+???
+- architecture de plugins (e.g. moteur de jeu Ambiant, Trinity)
+    - sandboxing + rapide + polyglotte
+- containers très légers
+    - VM = virtualisation du matériel, de l'OS et de tous les logiciels
+    - container = virtualisation de l'OS et des logiciels
+    - wasm = virtualisation d'un logiciel par module wasm
+        - *nano-processes*
+    - e.g. Docker wasm runtime, nodes wasm dans Kubernetes avec Krustlet
+    - temps de démarrage : minutes vs 2 millisecondes vs 5 microsecondes
+- architectures cloud
+    - plateforme cloud applicative (à la heroku)
+    - function as a service / lambdas (e.g. Shopify Functions)
+    - edge computing (e.g. Fastly / Cloudflare)
+    - petite révolution !
+
+---
+
+# Quoi de neuf depuis le MVP ?
+
+- SIMD (phase 4)
+- Tail calls (phase 4)
+- Atomics / shared memory (phase 3)
+- Garbage collector (phase 3)
+
+???
+
+- SIMD (adopté dans le standard depuis 2021, v2)
+    - traitement du signal / audio / video
+    - TensorFlow dans le navigateur, e.g. [virtual backgrounds dans GMeet](https://ai.googleblog.com/2020/10/background-features-in-google-meet.html)
+- Tail calls (phase 4)
+    - nécessaire pour les langages fonctionnels comme Lisp / Scheme
+- Atomics / shared memory (phase 3)
+    - multithreading dans le programme wasm
+    - pas encore de capacité à créer de nouveaux threads
+- Nouveauté : Garbage collector
+    - phase 3
+    - permet de définir des structures / tableaux gérés par un *garbage collector*
+    - très important pour le support de tous les langages à GC !
+        - évite des hacks pour supporter les GCs
+        - meilleures performances
+
+---
+
+# WA System Interface (WASI)
+
+- Standardiser les APIs d'une interface système
+    - I/O, file system, network, random...
+- Système de *permissions*
+    - Aucune, par défaut !
+- *Ensemble* de spécifications
+    - expérimentales (*preview0*)
+
+???
+
+- Standardiser les APIs d'une interface système
+    - on avait déjà le *code* portable, on a besoin maintenant d'un environnement (hôte) portable !
+- Donne accès au monde extérieur (système de fichiers, réseau, )
+    - via des *capabilities* (permissions)
+    - e.g. pas accès à tous les fichiers et répertoires, mais à rien par défaut (principle of least authority), et on allowlist uniquement ce qui est nécessaire
+- Un *ensemble* de nouvelles spécifications
+- Plusieurs versions différentes, pas de rétrocompatibilité (relativement stable, mais désir
+  d'expérimenter)
+- Preview 1
+    - reprend principalement les concepts de Posix tels quels
+    - inspiré par CloudABI
+    - interface à base de pointeurs et d'entiers
+
+---
+class: smaller
+
+# Interface à base d'entiers 🥴
+
+```c
+__wasi_errno_t
+    __wasi_path_remove_directory(
+        __wasi_fd_t dirfd,
+        const char* path
+    );
+```
+
+```lisp
+(func $__wasi_path_remove_directory
+    (result i32)
+    (param i32) (param i32))
+```
+
+---
+class: smaller
+
+### Pause citation
+
+> If WASM+WASI existed in 2008, we wouldn't have needed to created Docker. That's how important it is. Webassembly on the server is the future of computing. A standardized system interface was the missing link.
+
+--
+
+- Solomon Hykes, Docker co-founder (mars 2019)
+
+???
+
+Mais de qui est cette citation ?
+
+---
+
+# Component model
+
+> Comment promouvoir la *composabilité* des programmes, tout en maintenant la sécurité et les performances ?
+
+???
+
+- prendre des fonctionnalités déjà implémentées et les faire fonctionner ensemble pour créer de nouveaux usages
+- vous avez un programme pour lire des slides
+- vous avez un programme de serveur Web
+- comment faire un programme pour parcourir des slides sur le Web ?
+
+---
+
+# modules wasm = composants
+
+- s'interfacent les uns avec les autres
+- se passent des données de types haut-niveau
+- *importent* d'autres composants, *exportent* des méthodes
+- *créent* des nouveaux composants au moment de l'instantiation
+
+???
+
+- Idée = des modules wasm qui agissent comme des *composants*, petites briques lego
+    - s'interfacent les uns avec les autres
+    - se passent des données avec des types haut-niveau définis par les devs
+- Un composant définit un ensemble d'exports (APIs fournies au reste du monde) et un ensemble d'imports (APIs dont il a besoin pour fonctionner)
+    - sous la forme d'autres composants 🧠
+    - qui peuvent être implémentés par l'hôte (runtime) ou par d'autres composants
+        - injection de dépendences / testing
+- Un composant peut aussi créer de nouveaux composants au moment de son instantiation, *tant qu'ils leur passent les dépendences requises*
+
+---
+
+# Types de haut niveau
+
+- WIT = *WebAssembly Interface Types*
+    - Structures, tableaux,...
+    - Générateurs de *bindings*
+- Des ressources et des *handles*
+    - Ressource maintenue par un module et références (*handle*) vers cette ressource
+- Programmation concurrente structurée
+    - Runtime *async* unifié
+
+???
+
+- Types de haut niveau
+    - Définition de types avec un langage conçu pour cela : WIT = WebAssembly Interface Types
+        - structures, tableaux, options, résultats, etc.
+        - des programmes génèrent des *bindings* qui transforment ces types haut-niveau en les types bas-niveau que wasm core sait manipuler
+        - les composants peuvent réutiliser ce langage pour définir leurs *interfaces* et avoir un langage commun
+            - plus besoin de glue code
+    - Ressources
+        - *Everything is a file* = abstraction trop générale
+        - Si j'importe un file-system, qu'est-ce que j'utilise en réalité ? audit compliqué
+        - À la place, ressources / handles
+            - ressources identifiées uniquement par les composants qui les cèdent (impossible de se tromper)
+            - des types simples que les fonctions peuvent manipuler
+            - toujours le système de permissions
+    - Programmation concurrente structurée
+        - Une manière pour différents langages / runtimes d'utiliser les mêmes primitives de programmation concurrente
+            - = async/await entre Rust via tokio / NodeJS via libuv / Python via asyncio
+        - Top pour les performances également !
+
+---
+class: smaller
+
+# Exemple de WIT
+
+```
+interface slide-manager {
+  record slide {
+    content: string,
+    index: u32,
+  }
+  add-slide: func(s: slide)
+  move-to-slide: func(i32)
+  get-current: func() -> slide
+}
+
+default world pouvoirpoint {
+  import print: func(msg: string)
+  import keyboard: self.keyboard-events
+  import slides: self.slide-manager
+  export run: func()
+}
+```
+
+---
+
+# La vision du Component Model
+
+- Composabilité: interfaces
+- Performance: ABI commune
+- Sécurité : permissions
+
+--
+- Disponible dés maintenant !
+
+???
+
+- La vision : un modèle unifié du concept de dépendences
+    - Tous les langages qui arrivent à se parler main dans la main (composabilité)
+    - une ABI commune pour les gouverner toutes (performance)
+    - sécurité basée sur le principe de *capabilities* (permissions)
+- Disponible dés maintenant car construit au-dessus de Wasm "core"
+
+---
+
+# [Où en-est on ?](https://bytecodealliance.org/articles/component-model-tooling-compatibility)
+
+- **Instable** : en cours de spécification
+- WASI preview 2 réécrit en termes du *component model*
+    - bindings gratuits avec WIT 🥳
+    - nouvelles interfaces : blob store, KV store, logging, http, grpc, sql...
+- Support runtime : **wasmtime, polyfill Web**
+- Générateurs de *bindings* WIT : **wasmtime, C/Go/Rust/Java**
+- Créateurs de *composants* : Rust, JS
+
+???
+
+- [Où en-est on ?](https://bytecodealliance.org/articles/component-model-tooling-compatibility)
+    - Toujours en cours de spécification, relativement instable
+    - WASI preview 2 réécrit en termes du *component model*
+        - des interfaces plus haut niveau : Key/Value store, logging, http, grpc, sql, threads, etc.
+    - Runtime : wasmtime
+    - Générateurs de *bindings* pour WIT : wasmtime (hôte), C/Go/Rust/Java (guest)
+    - Générateurs de *composants* : cargo-component (Rust), jco (JavaScript)
+
+---
+
+# Dans un lointain tur-fu 👀
+
+- Unique système de dépendences
+    - *Jourdain*, développeur.se wasm
+
+--
+- Créer un langage ~= émettre du wasm ?
+
+???
+
+- Turfu
+    - exécuter du wasm sans s'en rendre compte ?
+    - un système de dépendences unifiées entre tous les langages
+        - utiliser du code de n'importe quel langage depuis n'importe quel langage
+        - ne pas se soucier du problème d'attaques de chaîne logistique
+    - créer un langage de programmation ~= écrire un langage qui compile vers wasm
+
+---
+
+# 2 (r)évolutions à retenir
+
+- Virtualisation via wasm, dans le cloud computing
+- Des composants (dépendences) unifiés via le *component model*
+
+---
+class: smaller
+
+# Merci !
+
+Si vous n'avez pas de questions,
+
+c'est à moi qu'il faut les poser,
+
+et si vous voulez mon opinion,
+
+ça je peux aller vous la chercher 🎵
+
+- **bnjbvr** sur 🐘 / 🐦 / 🕸
+
+---
+class: middle, center
+
+# Annexe : la mort de JS ?
+
+???
+
+- oui, en tant que *cible de compilation*
+- non, en tant que *langage*
+
+---
+class: middle, center
+
+# Annexe : Java 2.0 ?
+
+???
+
+- Wasm est intégré dans la plateforme Web par défaut (Java = plugin)
+- Le fait que d'autres langages tournent sur la JVM est plutôt accidentel
+    - e.g *invoke-dynamic*
+- Le bytecode de la JVM a été conçu pour faire tourner Java
+- On n'échappe pas au GC !
+- Comme pas conçu pour, les autres langages ne tournent pas efficacement sur la JVM
+
+---
+class: much-smaller
+
+# Annexe : Support des langages
+
+- Langage créés uniquement pour la compilation vers wasm
+    - [Grain](https://grain-lang.org/)
+- Compilés
+    - Rust, C, C++: tier 1
+    - Go: support natif, TInyGo
+- JVM:
+    - Java, plusieurs approches:
+        - compiler le bytecode vers du wasm: TeaVM
+        - interpréteur du bytecode compilé vers wasm: DoppioJVM
+    - Kotlin: Kotlin Wasm experimental target in Kotlin 1.8.20 (direct translation)
+- Interpreted languages = on compile la VM dans un module Wasm
+    - Lua
+    - JavaScript
+        - QuickJS via [Javy](https://github.com/Shopify/javy) / Spidermonkey
+    - Python / PHP / Ruby: interpreting the programs via compiling their interpreters to wasm
+        - cf https://wasmlabs.dev/articles/webassembly-language-runtimes-march-2023/
+
+    </textarea>
+    <script src="remark.js">
+    </script>
+    <script>
+var slideshow = remark.create({
+    highlightLanguage: "javascript",
+    highlightLines: true,
+    countIncrementalSlides: false
+});
+    </script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </body>
+</html>
