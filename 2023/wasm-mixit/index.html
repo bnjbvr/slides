@@ -218,7 +218,9 @@ class: center, middle
 
 - Architecture de plugins
 - Containers très légers
-    - VM > container > wasm
+    - VM 🐢
+    - container 🚗
+    - wasm 🚀
 - Architectures cloud
     - Dev ops
     - FaaS
@@ -272,10 +274,10 @@ class: center, middle
 
 - Standardiser les APIs d'une interface système
     - I/O, file system, network, random...
+- *Ensemble* de spécifications
+    - définies itérativement (*preview0*)
 - Système de *permissions*
     - Aucune, par défaut !
-- *Ensemble* de spécifications
-    - expérimentales (*preview0*)
 
 ???
 
@@ -297,6 +299,13 @@ class: smaller
 
 # Interface à base d'entiers 🥴
 
+```lisp
+(function $__wasi_path_remove_directory
+    (result i32)
+    (param i32 i32)
+)
+```
+
 ```c
 __wasi_errno_t
     __wasi_path_remove_directory(
@@ -305,11 +314,27 @@ __wasi_errno_t
     );
 ```
 
-```lisp
-(func $__wasi_path_remove_directory
-    (result i32)
-    (param i32) (param i32))
+---
+class: smaller
+
+# Interface haut niveau
+
+```python
+class WasiDir:
+    def remove_in_dir(self, path):
+        err = __wasi_path_remove_directory(
+            self.dirfd, path)
+        if err != 0:
+            raise RemoveDirException(...)
+
+my_dir = WasiDir(...)
+my_dir.remove_in_dir("sub_directory")
 ```
+
+???
+
+- code "bas niveau", proche du wasm, en C
+- code "haut niveau", qui va correspond, en Python
 
 ---
 class: smaller
@@ -351,6 +376,7 @@ Mais de qui est cette citation ?
 ???
 
 - Idée = des modules wasm qui agissent comme des *composants*, petites briques lego
+    - écrits dans des langages différents
     - s'interfacent les uns avec les autres
     - se passent des données avec des types haut-niveau définis par les devs
 - Un composant définit un ensemble d'exports (APIs fournies au reste du monde) et un ensemble d'imports (APIs dont il a besoin pour fonctionner)
