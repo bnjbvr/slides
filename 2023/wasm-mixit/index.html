@@ -181,11 +181,6 @@ background-size: 100% auto
 - compilé une fois, tourne partout ensuite
 
 ---
-class: center, middle
-
-# Cas d'usages
-
----
 
 # **Web**(Assembly)
 
@@ -370,6 +365,7 @@ Mais de qui est cette citation ?
 
 - s'interfacent les uns avec les autres
 - se passent des données de types haut-niveau
+    - pas de partage de mémoire = sémantique de copie
 - *importent* d'autres composants, *exportent* des méthodes
 - *créent* des nouveaux composants au moment de l'instantiation
 
@@ -430,14 +426,39 @@ interface slide-manager {
   }
   add-slide: func(s: slide)
   move-to-slide: func(i32)
-  get-current: func() -> slide
+  get-current: func() -> option<slide>
 }
 
-default world pouvoirpoint {
+default world pouvoir-point {
   import print: func(msg: string)
   import keyboard: self.keyboard-events
   import slides: self.slide-manager
   export run: func()
+}
+```
+
+---
+class: smaller
+
+### Bindings Rust
+
+```rust
+use SlideManager::{self, Slide};
+use print;
+
+struct MyProgram;
+
+impl PouvoirPoint for MyProgram {
+    fn run(&self) {
+        SlideManager::add_slide(Slide {
+            content: "Bonjour, monde!",
+            index: 1,
+        });
+        while let Some(slide) =
+          SlideManager::get_current() {
+            print(slide.content + "---");
+        }
+    }
 }
 ```
 
